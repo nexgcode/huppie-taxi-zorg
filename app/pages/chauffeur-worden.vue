@@ -1,11 +1,25 @@
 <script setup lang="ts">
-const submitted = ref(false)
-const errors = reactive<Record<string, string>>({})
-const driverLicense = shallowRef<File | null>(null)
-const driverCard = shallowRef<File | null>(null)
-const vog = shallowRef<File | null>(null)
-const certificates = shallowRef<File[]>([])
+import { z } from 'zod'
 
+const isFile = (value: unknown) => typeof File !== 'undefined' && value instanceof File
+
+const schema = z.object({
+  name: z.string().trim().min(1, 'Vul uw volledige naam in.'),
+  company: z.string().trim().min(1, 'Vul uw bedrijfsnaam in.'),
+  phone: z.string().trim().min(1, 'Vul uw telefoonnummer in.'),
+  email: z.string().trim().email('Vul een geldig e-mailadres in.'),
+  kvkNumber: z.string().trim().min(1, 'Vul uw KVK-nummer in.'),
+  txCertificate: z.string().refine(value => value === 'Ja' || value === 'Nee', 'Kies of u een TX-keurmerk heeft.'),
+  licensePlate: z.string().trim().min(1, 'Vul uw kenteken in.'),
+  vehicle: z.string().trim().min(1, 'Vul merk en model in.'),
+  driverLicense: z.unknown().refine(isFile, 'Upload uw rijbewijs.'),
+  driverCard: z.unknown().refine(isFile, 'Upload uw chauffeurskaart.'),
+  vog: z.unknown().refine(isFile, 'Upload uw VOG.'),
+  certificates: z.array(z.unknown()).min(1, 'Upload uw aanvullende certificaten.'),
+  termsAccepted: z.boolean().refine(value => value, 'U moet de voorwaarden accepteren.')
+})
+
+const submitted = ref(false)
 const form = reactive({
   name: '',
   company: '',
@@ -15,42 +29,12 @@ const form = reactive({
   txCertificate: '',
   licensePlate: '',
   vehicle: '',
+  driverLicense: null as File | null,
+  driverCard: null as File | null,
+  vog: null as File | null,
+  certificates: [] as File[],
   termsAccepted: false
 })
-
-function submitApplication() {
-  Object.assign(errors, {
-    name: '',
-    company: '',
-    phone: '',
-    email: '',
-    kvkNumber: '',
-    txCertificate: '',
-    licensePlate: '',
-    vehicle: '',
-    driverLicense: '',
-    driverCard: '',
-    vog: '',
-    certificates: '',
-    termsAccepted: ''
-  })
-
-  if (!form.name.trim()) errors.name = 'Vul uw volledige naam in.'
-  if (!form.company.trim()) errors.company = 'Vul uw bedrijfsnaam in.'
-  if (!form.phone.trim()) errors.phone = 'Vul uw telefoonnummer in.'
-  if (!form.email.trim() || !/^\S+@\S+\.\S+$/.test(form.email)) errors.email = 'Vul een geldig e-mailadres in.'
-  if (!form.kvkNumber.trim()) errors.kvkNumber = 'Vul uw KVK-nummer in.'
-  if (!form.txCertificate) errors.txCertificate = 'Kies of u een TX-keurmerk heeft.'
-  if (!form.licensePlate.trim()) errors.licensePlate = 'Vul uw kenteken in.'
-  if (!form.vehicle.trim()) errors.vehicle = 'Vul merk en model in.'
-  if (!driverLicense.value) errors.driverLicense = 'Upload uw rijbewijs.'
-  if (!driverCard.value) errors.driverCard = 'Upload uw chauffeurskaart.'
-  if (!vog.value) errors.vog = 'Upload uw VOG.'
-  if (!certificates.value.length) errors.certificates = 'Upload uw aanvullende certificaten.'
-  if (!form.termsAccepted) errors.termsAccepted = 'U moet de voorwaarden accepteren.'
-
-  if (!Object.values(errors).some(Boolean)) submitted.value = true
-}
 
 useSeoMeta({
   title: 'Word chauffeur bij Huppie Taxi',
@@ -92,10 +76,13 @@ useSeoMeta({
           </p>
         </div>
 
-        <form
+        <UForm
           v-else
+          :schema="schema"
+          :state="form"
+          :validate-on="['blur']"
           class="rounded-[1.5rem] border border-navy-900/10 bg-white p-6 shadow-sm sm:p-10"
-          @submit.prevent="submitApplication"
+          @submit="submitted = true"
         >
           <div>
             <p class="eyebrow">
@@ -106,8 +93,8 @@ useSeoMeta({
             </h2>
             <div class="mt-8 grid gap-5 sm:grid-cols-2">
               <UFormField
+                name="name"
                 label="Volledige naam"
-                :error="errors.name || undefined"
                 required
               >
                 <UInput
@@ -118,8 +105,8 @@ useSeoMeta({
                 />
               </UFormField>
               <UFormField
+                name="company"
                 label="Bedrijf"
-                :error="errors.company || undefined"
                 required
               >
                 <UInput
@@ -130,8 +117,8 @@ useSeoMeta({
                 />
               </UFormField>
               <UFormField
+                name="phone"
                 label="Telefoonnummer"
-                :error="errors.phone || undefined"
                 required
               >
                 <UInput
@@ -143,8 +130,8 @@ useSeoMeta({
                 />
               </UFormField>
               <UFormField
+                name="email"
                 label="E-mailadres"
-                :error="errors.email || undefined"
                 required
               >
                 <UInput
@@ -164,8 +151,8 @@ useSeoMeta({
             </p>
             <div class="mt-6 grid gap-5 sm:grid-cols-2">
               <UFormField
+                name="kvkNumber"
                 label="KVK-nummer"
-                :error="errors.kvkNumber || undefined"
                 required
               >
                 <UInput
@@ -176,8 +163,8 @@ useSeoMeta({
                 />
               </UFormField>
               <UFormField
+                name="txCertificate"
                 label="TX-keurmerk"
-                :error="errors.txCertificate || undefined"
                 required
               >
                 <USelect
@@ -197,8 +184,8 @@ useSeoMeta({
             </p>
             <div class="mt-6 grid gap-5 sm:grid-cols-2">
               <UFormField
+                name="licensePlate"
                 label="Kenteken"
-                :error="errors.licensePlate || undefined"
                 required
               >
                 <UInput
@@ -208,8 +195,8 @@ useSeoMeta({
                 />
               </UFormField>
               <UFormField
+                name="vehicle"
                 label="Merk en model"
-                :error="errors.vehicle || undefined"
                 required
               >
                 <UInput
@@ -230,12 +217,12 @@ useSeoMeta({
             </p>
             <div class="mt-6 grid gap-5 sm:grid-cols-2">
               <UFormField
+                name="driverLicense"
                 label="Upload je rijbewijs"
-                :error="errors.driverLicense || undefined"
                 required
               >
                 <UFileUpload
-                  v-model="driverLicense"
+                  v-model="form.driverLicense"
                   accept="application/pdf,image/*"
                   variant="area"
                   size="xl"
@@ -245,12 +232,12 @@ useSeoMeta({
                 />
               </UFormField>
               <UFormField
+                name="driverCard"
                 label="Upload je chauffeurskaart"
-                :error="errors.driverCard || undefined"
                 required
               >
                 <UFileUpload
-                  v-model="driverCard"
+                  v-model="form.driverCard"
                   accept="application/pdf,image/*"
                   variant="area"
                   size="xl"
@@ -260,12 +247,12 @@ useSeoMeta({
                 />
               </UFormField>
               <UFormField
+                name="vog"
                 label="Verklaring Omtrent Gedrag (VOG)"
-                :error="errors.vog || undefined"
                 required
               >
                 <UFileUpload
-                  v-model="vog"
+                  v-model="form.vog"
                   accept="application/pdf,image/*"
                   variant="area"
                   size="xl"
@@ -275,12 +262,12 @@ useSeoMeta({
                 />
               </UFormField>
               <UFormField
+                name="certificates"
                 label="Upload aanvullende certificaten"
-                :error="errors.certificates || undefined"
                 required
               >
                 <UFileUpload
-                  v-model="certificates"
+                  v-model="form.certificates"
                   multiple
                   accept="application/pdf,image/*"
                   variant="area"
@@ -294,7 +281,7 @@ useSeoMeta({
           </div>
 
           <UFormField
-            :error="errors.termsAccepted || undefined"
+            name="termsAccepted"
             class="mt-10"
           >
             <UCheckbox
@@ -313,7 +300,7 @@ useSeoMeta({
             size="xl"
             class="mt-8 w-full justify-center sm:w-auto"
           />
-        </form>
+        </UForm>
       </div>
     </section>
   </main>

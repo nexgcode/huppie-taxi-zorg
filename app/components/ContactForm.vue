@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { z } from 'zod'
+
 const props = withDefaults(defineProps<{
   eyebrow?: string
   title?: string
@@ -11,23 +13,15 @@ const props = withDefaults(defineProps<{
   successTitle: 'Bedankt voor uw bericht.'
 })
 
+const schema = z.object({
+  name: z.string().trim().min(1, 'Vul uw naam in.'),
+  email: z.string().trim().email('Vul een geldig e-mailadres in.'),
+  phone: z.string(),
+  message: z.string().trim().min(1, 'Vul uw bericht in.')
+})
+
 const submitted = ref(false)
-const errors = reactive<Record<string, string>>({})
 const form = reactive({ name: '', email: '', phone: '', message: '' })
-
-function clearErrors() {
-  Object.assign(errors, { name: '', email: '', message: '' })
-}
-
-function sendMessage() {
-  clearErrors()
-
-  if (!form.name.trim()) errors.name = 'Vul uw naam in.'
-  if (!form.email.trim() || !/^\S+@\S+\.\S+$/.test(form.email)) errors.email = 'Vul een geldig e-mailadres in.'
-  if (!form.message.trim()) errors.message = 'Vul uw bericht in.'
-
-  if (!Object.values(errors).some(Boolean)) submitted.value = true
-}
 </script>
 
 <template>
@@ -47,10 +41,13 @@ function sendMessage() {
     </p>
   </div>
 
-  <form
+  <UForm
     v-else
+    :schema="schema"
+    :state="form"
+    :validate-on="['blur']"
     class="rounded-[1.5rem] border border-navy-900/10 bg-white p-6 shadow-sm sm:p-10"
-    @submit.prevent="sendMessage"
+    @submit="submitted = true"
   >
     <p class="eyebrow">
       {{ props.eyebrow }}
@@ -64,8 +61,8 @@ function sendMessage() {
 
     <div class="mt-8 grid gap-5 sm:grid-cols-2">
       <UFormField
+        name="name"
         label="Naam"
-        :error="errors.name || undefined"
         required
       >
         <UInput
@@ -75,7 +72,10 @@ function sendMessage() {
           class="w-full"
         />
       </UFormField>
-      <UFormField label="Telefoonnummer">
+      <UFormField
+        name="phone"
+        label="Telefoonnummer"
+      >
         <UInput
           v-model="form.phone"
           type="tel"
@@ -87,8 +87,8 @@ function sendMessage() {
     </div>
 
     <UFormField
+      name="email"
       label="E-mailadres"
-      :error="errors.email || undefined"
       required
       class="mt-5"
     >
@@ -102,8 +102,8 @@ function sendMessage() {
     </UFormField>
 
     <UFormField
+      name="message"
       label="Bericht"
-      :error="errors.message || undefined"
       required
       class="mt-5"
     >
@@ -123,5 +123,5 @@ function sendMessage() {
       size="xl"
       class="mt-8 w-full justify-center sm:w-auto"
     />
-  </form>
+  </UForm>
 </template>

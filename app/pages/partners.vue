@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { getLocalTimeZone, today, type CalendarDate } from '@internationalized/date'
+import { getLocalTimeZone, today } from '@internationalized/date'
+import type { CalendarDate } from '@internationalized/date'
+import { z } from 'zod'
 
 const benefits = [
   { icon: 'i-lucide-calendar-clock', title: 'Slim gepland vervoer', text: 'Ons systeem verdeelt zorgritten automatisch over beschikbare chauffeurs, zodat de planning overzichtelijk blijft.' },
@@ -13,34 +15,20 @@ const timeOptions = Array.from({ length: 37 }, (_, index) => {
   return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`
 })
 
+const schema = z.object({
+  email: z.string().trim().email('Vul een geldig e-mailadres in.'),
+  appointmentDate: z.unknown().refine(value => value !== null && value !== undefined, 'Kies een afspraakdatum.'),
+  time: z.string().refine(time => timeOptions.includes(time), 'Kies een tijd tussen 09:00 en 18:00.')
+})
+
 const submitted = ref(false)
 const appointmentDate = shallowRef<CalendarDate | null>(null)
 const minAppointmentDate = today(getLocalTimeZone())
-const errors = reactive<Record<string, string>>({})
-const form = reactive({ email: '', time: '' })
-
-function validateEmail() {
-  errors.email = !form.email.trim() || !/^\S+@\S+\.\S+$/.test(form.email) ? 'Vul een geldig e-mailadres in.' : ''
-  return !errors.email
-}
-
-function validateAppointmentDate() {
-  errors.appointmentDate = appointmentDate.value ? '' : 'Kies een afspraakdatum.'
-  return !errors.appointmentDate
-}
-
-function validateTime() {
-  errors.time = !form.time || form.time < '09:00' || form.time > '18:00' ? 'Kies een tijd tussen 09:00 en 18:00.' : ''
-  return !errors.time
-}
-
-function submitAppointment() {
-  const isEmailValid = validateEmail()
-  const isDateValid = validateAppointmentDate()
-  const isTimeValid = validateTime()
-
-  if (isEmailValid && isDateValid && isTimeValid) submitted.value = true
-}
+const form = reactive({
+  email: '',
+  appointmentDate: null as unknown,
+  time: ''
+})
 
 useSeoMeta({
   title: 'Partner worden | Huppie Taxi',
@@ -141,10 +129,13 @@ useSeoMeta({
           </p>
         </div>
 
-        <form
+        <UForm
           v-else
+          :schema="schema"
+          :state="form"
+          :validate-on="['blur']"
           class="rounded-[1.5rem] border border-navy-900/10 bg-white p-6 shadow-sm sm:p-10"
-          @submit.prevent="submitAppointment"
+          @submit="submitted = true"
         >
           <p class="eyebrow">
             Partner worden
@@ -157,8 +148,8 @@ useSeoMeta({
           </p>
 
           <UFormField
+            name="email"
             label="E-mailadres"
-            :error="errors.email || undefined"
             required
             class="mt-8"
           >
@@ -168,14 +159,13 @@ useSeoMeta({
               autocomplete="email"
               size="xl"
               class="w-full"
-              @blur="validateEmail"
             />
           </UFormField>
 
           <div class="mt-5 grid gap-5 sm:grid-cols-2">
             <UFormField
+              name="appointmentDate"
               label="Voorkeursdatum"
-              :error="errors.appointmentDate || undefined"
               required
             >
               <UInputDate
@@ -184,13 +174,13 @@ useSeoMeta({
                 locale="nl-NL"
                 size="xl"
                 class="w-full"
-                @blur="validateAppointmentDate"
+                @update:model-value="form.appointmentDate = $event"
               />
             </UFormField>
             <UFormField
+              name="time"
               label="Voorkeurstijd"
               help="Beschikbaar van 09:00 tot 18:00 uur."
-              :error="errors.time || undefined"
               required
             >
               <USelect
@@ -199,7 +189,6 @@ useSeoMeta({
                 placeholder="Kies een tijd"
                 size="xl"
                 class="w-full"
-                @blur="validateTime"
               />
             </UFormField>
           </div>
@@ -212,7 +201,7 @@ useSeoMeta({
             size="xl"
             class="mt-8 w-full justify-center sm:w-auto"
           />
-        </form>
+        </UForm>
       </div>
     </section>
   </main>

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { CalendarDate } from '@internationalized/date'
+import { z } from 'zod'
 
 const step = ref(1)
 const submitted = ref(false)
 const birthDate = shallowRef<CalendarDate | null>(null)
-const errors = reactive<Record<string, string>>({})
-
 const form = reactive({
   firstName: '',
   lastName: '',
+  birthDate: null as unknown,
   email: '',
   phone: '',
   insurer: '',
@@ -26,43 +26,29 @@ const insurers = [
   'Anders'
 ]
 
-const hasErrors = computed(() => Object.values(errors).some(Boolean))
+const personalSchema = z.object({
+  firstName: z.string().trim().min(1, 'Vul uw voornaam in.'),
+  lastName: z.string().trim().min(1, 'Vul uw achternaam in.'),
+  birthDate: z.unknown().refine(value => value !== null && value !== undefined, 'Vul uw geboortedatum in.'),
+  email: z.string().trim().email('Vul een geldig e-mailadres in.'),
+  phone: z.string().trim().min(1, 'Vul uw telefoonnummer in.')
+})
 
-function clearErrors() {
-  Object.assign(errors, {
-    firstName: '',
-    lastName: '',
-    birthDate: '',
-    email: '',
-    phone: '',
-    insurer: '',
-    policyNumber: '',
-    authorisationNumber: '',
-    consent: ''
-  })
-}
+const insuranceSchema = z.object({
+  insurer: z.string().min(1, 'Kies uw zorgverzekeraar.'),
+  policyNumber: z.string().trim().min(1, 'Vul uw polisnummer in.'),
+  authorisationNumber: z.string().trim().min(1, 'Vul uw machtigingsnummer in.'),
+  consent: z.boolean().refine(value => value, 'Uw toestemming is nodig om door te gaan.')
+})
+
+const schema = computed(() => step.value === 1 ? personalSchema : insuranceSchema)
 
 function continueToInsurance() {
-  clearErrors()
-
-  if (!form.firstName.trim()) errors.firstName = 'Vul uw voornaam in.'
-  if (!form.lastName.trim()) errors.lastName = 'Vul uw achternaam in.'
-  if (!birthDate.value) errors.birthDate = 'Vul uw geboortedatum in.'
-  if (!form.email.trim() || !/^\S+@\S+\.\S+$/.test(form.email)) errors.email = 'Vul een geldig e-mailadres in.'
-  if (!form.phone.trim()) errors.phone = 'Vul uw telefoonnummer in.'
-
-  if (!hasErrors.value) step.value = 2
+  step.value = 2
 }
 
 function submitRequest() {
-  clearErrors()
-
-  if (!form.insurer) errors.insurer = 'Kies uw zorgverzekeraar.'
-  if (!form.policyNumber.trim()) errors.policyNumber = 'Vul uw polisnummer in.'
-  if (!form.authorisationNumber.trim()) errors.authorisationNumber = 'Vul uw machtigingsnummer in.'
-  if (!form.consent) errors.consent = 'Uw toestemming is nodig om door te gaan.'
-
-  if (!hasErrors.value) submitted.value = true
+  submitted.value = true
 }
 </script>
 
@@ -134,10 +120,13 @@ function submitRequest() {
           />
         </div>
 
-        <form
+        <UForm
           v-else
+          :schema="schema"
+          :state="form"
+          :validate-on="['blur']"
           class="rounded-[1.5rem] border border-navy-900/10 bg-white p-6 shadow-sm sm:p-10"
-          @submit.prevent="step === 1 ? continueToInsurance() : submitRequest()"
+          @submit="step === 1 ? continueToInsurance() : submitRequest()"
         >
           <template v-if="step === 1">
             <p class="eyebrow">
@@ -152,8 +141,8 @@ function submitRequest() {
 
             <div class="mt-8 grid gap-5 sm:grid-cols-2">
               <UFormField
+                name="firstName"
                 label="Voornaam"
-                :error="errors.firstName || undefined"
                 required
               >
                 <UInput
@@ -164,8 +153,8 @@ function submitRequest() {
                 />
               </UFormField>
               <UFormField
+                name="lastName"
                 label="Achternaam"
-                :error="errors.lastName || undefined"
                 required
               >
                 <UInput
@@ -176,8 +165,8 @@ function submitRequest() {
                 />
               </UFormField>
               <UFormField
+                name="birthDate"
                 label="Geboortedatum"
-                :error="errors.birthDate || undefined"
                 required
               >
                 <UInputDate
@@ -185,11 +174,12 @@ function submitRequest() {
                   locale="nl-NL"
                   size="xl"
                   class="w-full"
+                  @update:model-value="form.birthDate = $event"
                 />
               </UFormField>
               <UFormField
+                name="phone"
                 label="Telefoonnummer"
-                :error="errors.phone || undefined"
                 required
               >
                 <UInput
@@ -202,8 +192,8 @@ function submitRequest() {
               </UFormField>
             </div>
             <UFormField
+              name="email"
               label="E-mailadres"
-              :error="errors.email || undefined"
               required
               class="mt-5"
             >
@@ -238,8 +228,8 @@ function submitRequest() {
 
             <div class="mt-8 grid gap-5 sm:grid-cols-2">
               <UFormField
+                name="insurer"
                 label="Zorgverzekeraar"
-                :error="errors.insurer || undefined"
                 required
               >
                 <USelect
@@ -251,8 +241,8 @@ function submitRequest() {
                 />
               </UFormField>
               <UFormField
+                name="policyNumber"
                 label="Polisnummer"
-                :error="errors.policyNumber || undefined"
                 required
               >
                 <UInput
@@ -264,8 +254,8 @@ function submitRequest() {
               </UFormField>
             </div>
             <UFormField
+              name="authorisationNumber"
               label="Machtigingsnummer"
-              :error="errors.authorisationNumber || undefined"
               required
               class="mt-5"
             >
@@ -277,23 +267,20 @@ function submitRequest() {
               />
             </UFormField>
 
-            <div class="mt-6 rounded-xl bg-navy-50 p-5">
+            <UFormField
+              name="consent"
+              class="mt-6 rounded-xl bg-navy-50 p-5"
+            >
               <UCheckbox
                 v-model="form.consent"
                 required
                 label="Ik geef Huppie Taxi toestemming om namens mij contact op te nemen met mijn zorgverzekeraar over deze aanvraag voor zorgvervoer."
                 size="lg"
               />
-              <p
-                v-if="errors.consent"
-                class="mt-3 text-sm font-medium text-red-600"
-              >
-                {{ errors.consent }}
-              </p>
               <p class="mt-3 pl-8 text-sm leading-6 text-navy-700">
                 Deze toestemming geldt alleen voor het bespreken en regelen van de zorgvervoeraanvraag die u hier indient.
               </p>
-            </div>
+            </UFormField>
 
             <div class="mt-8 flex flex-col gap-3 sm:flex-row">
               <UButton
@@ -314,7 +301,7 @@ function submitRequest() {
               />
             </div>
           </template>
-        </form>
+        </UForm>
       </div>
     </section>
   </main>
