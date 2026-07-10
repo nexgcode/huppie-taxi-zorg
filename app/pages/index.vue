@@ -242,39 +242,6 @@ const faqs = [
       </section>
 
       <section
-        id="partners"
-        class="border-y border-navy-900/10 bg-white py-20 sm:py-28"
-      >
-        <div class="section-wrap grid gap-10 lg:grid-cols-[1fr_0.8fr] lg:items-center">
-          <div>
-            <p class="eyebrow">
-              Voor zorgpartners
-            </p><h2 class="display-heading mt-4 text-4xl leading-tight sm:text-5xl">
-              Een duidelijk aanspreekpunt voor zorgorganisaties.
-            </h2><p class="mt-6 max-w-xl leading-7 text-navy-700">
-              Praktijken, klinieken, revalidatiecentra en zorgorganisaties kunnen contact opnemen om toekomstige vervoersbehoeften te bespreken.
-            </p>
-          </div><div class="rounded-2xl border border-navy-900/10 bg-[#f7f8f6] p-7">
-            <UIcon
-              name="i-lucide-messages-square"
-              class="size-7 text-teal-700"
-            /><h3 class="mt-5 text-xl font-bold">
-              Neem contact op met Huppie Taxi
-            </h3><p class="mt-3 leading-7 text-navy-700">
-              Vertel ons over uw organisatie en de ritten die u wilt regelen.
-            </p><UButton
-              to="/rit-aanvragen"
-              label="Partneraanvraag"
-              variant="outline"
-              color="neutral"
-              size="lg"
-              class="mt-6"
-            />
-          </div>
-        </div>
-      </section>
-
-      <section
         id="vragen"
         class="section-wrap py-20 sm:py-28"
       >
