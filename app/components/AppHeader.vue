@@ -3,6 +3,7 @@ const isMenuOpen = ref(false)
 
 const navigation = [
   { label: 'Veelgestelde vragen', to: '/#vragen' },
+  { label: 'Voor zorgpartners', to: '/partners' },
   { label: 'Contact', to: '/contact' }
 ]
 </script>
