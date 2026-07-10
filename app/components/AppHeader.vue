@@ -17,8 +17,13 @@ const navigation = [
         class="flex items-center gap-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-4"
         aria-label="Huppie Taxi, startpagina"
       >
-        <span class="flex size-10 items-center justify-center rounded-full bg-navy-900 text-lg font-bold text-white">H</span>
-        <span class="text-lg font-bold tracking-tight text-navy-900">Huppie <span class="font-normal">Taxi</span></span>
+        <img
+          src="/favicon.svg"
+          alt=""
+          aria-hidden="true"
+          class="size-16 object-contain"
+        >
+        <span class="text-xl font-bold tracking-tight text-primary">Huppie Taxi</span>
       </NuxtLink>
 
       <nav
