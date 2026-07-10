@@ -100,6 +100,7 @@ useSeoMeta({
                 <UInput
                   v-model="form.name"
                   autocomplete="name"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -112,6 +113,7 @@ useSeoMeta({
                 <UInput
                   v-model="form.company"
                   autocomplete="organization"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -125,6 +127,7 @@ useSeoMeta({
                   v-model="form.phone"
                   type="tel"
                   autocomplete="tel"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -138,6 +141,7 @@ useSeoMeta({
                   v-model="form.email"
                   type="email"
                   autocomplete="email"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -158,6 +162,7 @@ useSeoMeta({
                 <UInput
                   v-model="form.kvkNumber"
                   inputmode="numeric"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -171,6 +176,7 @@ useSeoMeta({
                   v-model="form.txCertificate"
                   :items="['Ja', 'Nee']"
                   placeholder="Maak een keuze"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -190,6 +196,7 @@ useSeoMeta({
               >
                 <UInput
                   v-model="form.licensePlate"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -201,6 +208,7 @@ useSeoMeta({
               >
                 <UInput
                   v-model="form.vehicle"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -218,12 +226,13 @@ useSeoMeta({
             <div class="mt-6 grid gap-5 sm:grid-cols-2">
               <UFormField
                 name="driverLicense"
-                label="Upload je rijbewijs"
+                label="Upload uw rijbewijs"
                 required
               >
                 <UFileUpload
                   v-model="form.driverLicense"
                   accept="application/pdf,image/*"
+                  aria-required="true"
                   variant="area"
                   size="xl"
                   label="Kies uw rijbewijs"
@@ -233,12 +242,13 @@ useSeoMeta({
               </UFormField>
               <UFormField
                 name="driverCard"
-                label="Upload je chauffeurskaart"
+                label="Upload uw chauffeurskaart"
                 required
               >
                 <UFileUpload
                   v-model="form.driverCard"
                   accept="application/pdf,image/*"
+                  aria-required="true"
                   variant="area"
                   size="xl"
                   label="Kies uw chauffeurskaart"
@@ -248,12 +258,13 @@ useSeoMeta({
               </UFormField>
               <UFormField
                 name="vog"
-                label="Verklaring Omtrent Gedrag (VOG)"
+                label="Upload uw VOG"
                 required
               >
                 <UFileUpload
                   v-model="form.vog"
                   accept="application/pdf,image/*"
+                  aria-required="true"
                   variant="area"
                   size="xl"
                   label="Kies uw VOG"
@@ -263,13 +274,14 @@ useSeoMeta({
               </UFormField>
               <UFormField
                 name="certificates"
-                label="Upload aanvullende certificaten"
+                label="Upload uw aanvullende certificaten"
                 required
               >
                 <UFileUpload
                   v-model="form.certificates"
                   multiple
                   accept="application/pdf,image/*"
+                  aria-required="true"
                   variant="area"
                   size="xl"
                   label="Kies uw certificaten"
@@ -287,7 +299,7 @@ useSeoMeta({
             <UCheckbox
               v-model="form.termsAccepted"
               label="Ik accepteer de voorwaarden voor aanmelding als chauffeur."
-              required
+              aria-required="true"
               size="lg"
             />
           </UFormField>

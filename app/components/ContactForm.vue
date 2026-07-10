@@ -68,6 +68,7 @@ const form = reactive({ name: '', email: '', phone: '', message: '' })
         <UInput
           v-model="form.name"
           autocomplete="name"
+          aria-required="true"
           size="xl"
           class="w-full"
         />
@@ -96,6 +97,7 @@ const form = reactive({ name: '', email: '', phone: '', message: '' })
         v-model="form.email"
         type="email"
         autocomplete="email"
+        aria-required="true"
         size="xl"
         class="w-full"
       />
@@ -109,6 +111,7 @@ const form = reactive({ name: '', email: '', phone: '', message: '' })
     >
       <UTextarea
         v-model="form.message"
+        aria-required="true"
         :rows="5"
         size="xl"
         class="w-full"

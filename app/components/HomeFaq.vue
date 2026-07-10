@@ -11,13 +11,18 @@ const faqs = [
 <template>
   <section
     id="vragen"
+    aria-labelledby="faq-title"
     class="section-wrap py-20 sm:py-28"
   >
     <div class="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
       <div>
         <p class="eyebrow">
           Veelgestelde vragen
-        </p><h2 class="display-heading mt-4 text-4xl leading-tight sm:text-5xl">
+        </p>
+        <h2
+          id="faq-title"
+          class="display-heading mt-4 text-4xl leading-tight sm:text-5xl"
+        >
           Goed om te weten voor u boekt.
         </h2>
       </div><UAccordion

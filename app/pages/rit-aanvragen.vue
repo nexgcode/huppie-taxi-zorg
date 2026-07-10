@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import type { CalendarDate } from '@internationalized/date'
+import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date'
 import { z } from 'zod'
 
 const step = ref(1)
 const submitted = ref(false)
 const birthDate = shallowRef<CalendarDate | null>(null)
+const todayDate = today(getLocalTimeZone())
+const minBirthDate = todayDate.subtract({ years: 120 })
+const maxBirthDate = todayDate
 const form = reactive({
   firstName: '',
   lastName: '',
@@ -29,7 +32,12 @@ const insurers = [
 const personalSchema = z.object({
   firstName: z.string().trim().min(1, 'Vul uw voornaam in.'),
   lastName: z.string().trim().min(1, 'Vul uw achternaam in.'),
-  birthDate: z.unknown().refine(value => value !== null && value !== undefined, 'Vul uw geboortedatum in.'),
+  birthDate: z.unknown()
+    .refine(value => value instanceof CalendarDate, 'Vul uw geboortedatum in.')
+    .refine((value) => {
+      if (!(value instanceof CalendarDate)) return false
+      return value.compare(minBirthDate) >= 0 && value.compare(maxBirthDate) <= 0
+    }, 'Vul een geldige geboortedatum in.'),
   email: z.string().trim().email('Vul een geldig e-mailadres in.'),
   phone: z.string().trim().min(1, 'Vul uw telefoonnummer in.')
 })
@@ -148,6 +156,7 @@ function submitRequest() {
                 <UInput
                   v-model="form.firstName"
                   autocomplete="given-name"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -160,6 +169,7 @@ function submitRequest() {
                 <UInput
                   v-model="form.lastName"
                   autocomplete="family-name"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -171,6 +181,9 @@ function submitRequest() {
               >
                 <UInputDate
                   v-model="birthDate"
+                  :min-value="minBirthDate"
+                  :max-value="maxBirthDate"
+                  aria-required="true"
                   locale="nl-NL"
                   size="xl"
                   class="w-full"
@@ -186,6 +199,7 @@ function submitRequest() {
                   v-model="form.phone"
                   type="tel"
                   autocomplete="tel"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -201,6 +215,7 @@ function submitRequest() {
                 v-model="form.email"
                 type="email"
                 autocomplete="email"
+                aria-required="true"
                 size="xl"
                 class="w-full"
               />
@@ -236,6 +251,7 @@ function submitRequest() {
                   v-model="form.insurer"
                   :items="insurers"
                   placeholder="Kies uw zorgverzekeraar"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -248,6 +264,7 @@ function submitRequest() {
                 <UInput
                   v-model="form.policyNumber"
                   autocomplete="off"
+                  aria-required="true"
                   size="xl"
                   class="w-full"
                 />
@@ -262,6 +279,7 @@ function submitRequest() {
               <UInput
                 v-model="form.authorisationNumber"
                 autocomplete="off"
+                aria-required="true"
                 size="xl"
                 class="w-full"
               />
@@ -273,7 +291,7 @@ function submitRequest() {
             >
               <UCheckbox
                 v-model="form.consent"
-                required
+                aria-required="true"
                 label="Ik geef Huppie Taxi toestemming om namens mij contact op te nemen met mijn zorgverzekeraar over deze aanvraag voor zorgvervoer."
                 size="lg"
               />

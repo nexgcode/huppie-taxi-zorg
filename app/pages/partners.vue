@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { getLocalTimeZone, today } from '@internationalized/date'
-import type { CalendarDate } from '@internationalized/date'
+import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date'
 import { z } from 'zod'
 
 const benefits = [
@@ -15,15 +14,22 @@ const timeOptions = Array.from({ length: 37 }, (_, index) => {
   return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`
 })
 
+const minAppointmentDate = today(getLocalTimeZone())
+const maxAppointmentDate = minAppointmentDate.add({ years: 1 })
+
 const schema = z.object({
   email: z.string().trim().email('Vul een geldig e-mailadres in.'),
-  appointmentDate: z.unknown().refine(value => value !== null && value !== undefined, 'Kies een afspraakdatum.'),
+  appointmentDate: z.unknown()
+    .refine(value => value instanceof CalendarDate, 'Kies een afspraakdatum.')
+    .refine((value) => {
+      if (!(value instanceof CalendarDate)) return false
+      return value.compare(minAppointmentDate) >= 0 && value.compare(maxAppointmentDate) <= 0
+    }, 'Kies een datum binnen het komende jaar.'),
   time: z.string().refine(time => timeOptions.includes(time), 'Kies een tijd tussen 09:00 en 18:00.')
 })
 
 const submitted = ref(false)
 const appointmentDate = shallowRef<CalendarDate | null>(null)
-const minAppointmentDate = today(getLocalTimeZone())
 const form = reactive({
   email: '',
   appointmentDate: null as unknown,
@@ -144,7 +150,7 @@ useSeoMeta({
             Plan een kennismaking.
           </h2>
           <p class="mt-4 leading-7 text-navy-700">
-            Kies een datum en tijd tussen 09:00 en 18:00 uur. We nemen contact met u op om de afspraak te bevestigen.
+            Kies een datum binnen het komende jaar en een tijd tussen 09:00 en 18:00 uur. We nemen contact met u op om de afspraak te bevestigen.
           </p>
 
           <UFormField
@@ -157,6 +163,7 @@ useSeoMeta({
               v-model="form.email"
               type="email"
               autocomplete="email"
+              aria-required="true"
               size="xl"
               class="w-full"
             />
@@ -171,6 +178,8 @@ useSeoMeta({
               <UInputDate
                 v-model="appointmentDate"
                 :min-value="minAppointmentDate"
+                :max-value="maxAppointmentDate"
+                aria-required="true"
                 locale="nl-NL"
                 size="xl"
                 class="w-full"
@@ -187,6 +196,7 @@ useSeoMeta({
                 v-model="form.time"
                 :items="timeOptions"
                 placeholder="Kies een tijd"
+                aria-required="true"
                 size="xl"
                 class="w-full"
               />
