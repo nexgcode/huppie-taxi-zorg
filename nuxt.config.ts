@@ -1,9 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: [
-    '@nuxt/eslint',
-    '@nuxt/ui'
-  ],
+  modules: ['@nuxt/eslint', '@nuxt/ui', 'nuxt-umami'],
 
   devtools: {
     enabled: true
@@ -28,5 +25,12 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
+  },
+
+  umami: {
+    id: '31b9df03-750a-45af-82cf-5544aaa77554',
+    host: 'https://cloud.umami.is',
+    autoTrack: true,
+    proxy: 'cloak'
   }
 })
