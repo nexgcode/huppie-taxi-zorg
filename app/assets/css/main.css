@@ -2,17 +2,46 @@
 @import "@nuxt/ui";
 
 @theme static {
-  --font-sans: 'Public Sans', sans-serif;
+  --font-sans: 'Arial', 'Helvetica Neue', sans-serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
 
-  --color-green-50: #EFFDF5;
-  --color-green-100: #D9FBE8;
-  --color-green-200: #B3F5D1;
-  --color-green-300: #75EDAE;
-  --color-green-400: #00DC82;
-  --color-green-500: #00C16A;
-  --color-green-600: #00A155;
-  --color-green-700: #007F45;
-  --color-green-800: #016538;
-  --color-green-900: #0A5331;
-  --color-green-950: #052E16;
+  --color-navy-50: #f3f7f8;
+  --color-navy-100: #e3ecee;
+  --color-navy-700: #173c46;
+  --color-navy-800: #102e37;
+  --color-navy-900: #08232b;
+  --color-teal-50: #eef8f6;
+  --color-teal-100: #d8eeea;
+  --color-teal-500: #317f77;
+  --color-teal-600: #226b64;
+  --color-teal-700: #19554f;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-[#f7f8f6] text-navy-900 antialiased;
+  }
+
+  ::selection {
+    @apply bg-teal-100 text-navy-900;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.18em] text-teal-700;
+  }
+
+  .section-wrap {
+    @apply mx-auto max-w-7xl px-5 sm:px-8 lg:px-10;
+  }
+
+  .display-heading {
+    font-family: var(--font-serif);
+    @apply tracking-[-0.045em];
+  }
 }
