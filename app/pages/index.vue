@@ -60,7 +60,7 @@ const faqs = [
                 variant="ghost"
                 color="neutral"
                 size="xl"
-                class="justify-center border border-white/40 bg-transparent !text-white hover:bg-white/10"
+                class="justify-center border border-white/40 bg-transparent text-white! hover:bg-white/10"
               />
             </div>
             <p class="mt-6 text-sm text-slate-300">
@@ -68,7 +68,7 @@ const faqs = [
             </p>
           </div>
           <div class="relative mx-auto w-full max-w-xl lg:max-w-none">
-            <div class="absolute -right-16 -top-14 size-48 rounded-full border border-teal-400/30 sm:size-64" /><div class="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#123740] p-6 shadow-2xl sm:p-8">
+            <div class="absolute -right-16 -top-14 size-48 rounded-full border border-teal-400/30 sm:size-64" /><div class="relative overflow-hidden rounded-4xl border border-white/10 bg-[#123740] p-6 shadow-2xl sm:p-8">
               <div class="flex items-center justify-between border-b border-white/10 pb-6">
                 <p class="text-sm font-semibold text-teal-100">
                   Uw rit, overzichtelijk geregeld
@@ -129,7 +129,7 @@ const faqs = [
       </section>
 
       <section class="section-wrap py-12 sm:py-16">
-        <div class="grid overflow-hidden rounded-[2rem] bg-navy-900 text-white lg:grid-cols-2">
+        <div class="grid overflow-hidden rounded-4xl bg-navy-900 text-white lg:grid-cols-2">
           <div class="p-8 sm:p-12 lg:p-16">
             <p class="eyebrow text-teal-200">
               Terugkerende afspraken
@@ -150,7 +150,7 @@ const faqs = [
             />
           </div>
           <div class="relative min-h-72 overflow-hidden bg-[#164852] p-8 sm:p-12">
-            <div class="absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_1px_1px,_#d8eeea_1px,_transparent_0)] [background-size:20px_20px]" />
+            <div class="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_1px_1px,#d8eeea_1px,transparent_0)] bg-size-[20px_20px]" />
             <div class="relative ml-auto max-w-xs rounded-2xl bg-white p-6 text-navy-900 shadow-xl">
               <p class="text-sm font-bold text-teal-700">
                 Een vaste planning kan bestaan uit
