@@ -15,9 +15,9 @@
               class="transition hover:text-white focus:outline-none focus:underline"
             >+31 6 81914785</a>
             <a
-              href="mailto:info@huppietaxi.nl"
+              href="mailto:zorg@huppietaxi.nl"
               class="transition hover:text-white focus:outline-none focus:underline"
-            >info@huppietaxi.nl</a>
+            >zorg@huppietaxi.nl</a>
           </div>
         </div>
         <p class="text-sm">

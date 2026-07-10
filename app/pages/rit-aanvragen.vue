@@ -49,6 +49,18 @@ const insuranceSchema = z.object({
   consent: z.boolean().refine(value => value, 'Uw toestemming is nodig om door te gaan.')
 })
 
+usePageSeo({
+  title: 'Zorgvervoer aanvragen',
+  description: 'Vraag zorgvervoer aan bij Huppie Taxi. Uw aanvraag wordt zorgvuldig behandeld.',
+  path: '/rit-aanvragen',
+  noindex: true
+})
+
+defineOgImage('Huppie', {
+  title: 'Zorgvervoer aanvragen',
+  description: 'Vraag zorgvervoer aan bij Huppie Taxi. Uw aanvraag wordt zorgvuldig behandeld.'
+})
+
 const schema = computed(() => step.value === 1 ? personalSchema : insuranceSchema)
 
 function continueToInsurance() {

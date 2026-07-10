@@ -36,9 +36,15 @@ const form = reactive({
   termsAccepted: false
 })
 
-useSeoMeta({
-  title: 'Word chauffeur bij Huppie Taxi',
-  description: 'Meld u aan als chauffeur bij Huppie Taxi.'
+usePageSeo({
+  title: 'Word chauffeur in zorgvervoer',
+  description: 'Meld u aan als chauffeur bij Huppie Taxi en rijd zorgvervoer met aandacht voor cliënten en duidelijke planning.',
+  path: '/chauffeur-worden'
+})
+
+defineOgImage('Huppie', {
+  title: 'Word chauffeur in zorgvervoer',
+  description: 'Meld u aan als chauffeur bij Huppie Taxi en rijd zorgvervoer met aandacht voor cliënten en duidelijke planning.'
 })
 </script>
 

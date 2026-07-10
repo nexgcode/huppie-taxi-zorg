@@ -11,16 +11,35 @@ useHead({
   }
 })
 
-const title = 'Huppie Taxi | Betrouwbaar zorgvervoer'
+const title = 'Betrouwbaar zorgvervoer'
 const description = 'Betrouwbaar en comfortabel vervoer naar ziekenhuizen, klinieken en medische afspraken.'
 
 useSeoMeta({
   title,
+  titleTemplate: '%s | Huppie Taxi',
   description,
   ogTitle: title,
   ogDescription: description,
+  ogSiteName: 'Huppie Taxi',
+  ogLocale: 'nl_NL',
+  ogType: 'website',
   twitterCard: 'summary_large_image'
 })
+
+useSchemaOrg([
+  defineOrganization({
+    '@type': 'Organization',
+    'name': 'Huppie Taxi',
+    'url': 'https://zorg.huppietaxi.nl/',
+    'email': 'zorg@huppietaxi.nl',
+    'telephone': '+31681914785'
+  }),
+  defineWebSite({
+    name: 'Huppie Taxi',
+    url: 'https://zorg.huppietaxi.nl/',
+    inLanguage: 'nl-NL'
+  })
+])
 </script>
 
 <template>

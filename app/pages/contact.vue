@@ -1,7 +1,13 @@
 <script setup lang="ts">
-useSeoMeta({
-  title: 'Contact | Huppie Taxi',
-  description: 'Neem contact op met Huppie Taxi over uw aanvraag voor zorgvervoer.'
+usePageSeo({
+  title: 'Contact over zorgvervoer',
+  description: 'Neem contact op met Huppie Taxi over een aanvraag, geplande rit of vraag over zorgvervoer.',
+  path: '/contact'
+})
+
+defineOgImage('Huppie', {
+  title: 'Contact over zorgvervoer',
+  description: 'Neem contact op met Huppie Taxi over een aanvraag, geplande rit of vraag over zorgvervoer.'
 })
 </script>
 
@@ -24,9 +30,9 @@ useSeoMeta({
             class="font-semibold text-teal-100 transition hover:text-white focus:outline-none focus:underline"
           >+31 6 81914785</a>
           <a
-            href="mailto:info@huppietaxi.nl"
+            href="mailto:zorg@huppietaxi.nl"
             class="font-semibold text-teal-100 transition hover:text-white focus:outline-none focus:underline"
-          >info@huppietaxi.nl</a>
+          >zorg@huppietaxi.nl</a>
         </div>
       </div>
     </section>

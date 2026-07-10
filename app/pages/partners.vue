@@ -36,9 +36,15 @@ const form = reactive({
   time: ''
 })
 
-useSeoMeta({
-  title: 'Partner worden | Huppie Taxi',
-  description: 'Werk samen met Huppie Taxi voor gepland en overzichtelijk zorgvervoer.'
+usePageSeo({
+  title: 'Partner worden voor zorgvervoer',
+  description: 'Werk samen met Huppie Taxi voor betrouwbaar, gepland en overzichtelijk zorgvervoer voor uw cliënten.',
+  path: '/partners'
+})
+
+defineOgImage('Huppie', {
+  title: 'Partner worden voor zorgvervoer',
+  description: 'Werk samen met Huppie Taxi voor betrouwbaar, gepland en overzichtelijk zorgvervoer voor uw cliënten.'
 })
 </script>
 
