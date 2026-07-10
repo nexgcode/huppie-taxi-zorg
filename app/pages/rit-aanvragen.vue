@@ -68,7 +68,7 @@ function submitRequest() {
       </div>
     </section>
 
-    <section class="section-wrap py-14 sm:py-20">
+    <section class="section-wrap py-16 sm:py-20">
       <div class="mx-auto max-w-3xl">
         <div
           class="mb-10 grid grid-cols-2 gap-3"

@@ -58,8 +58,8 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="section-wrap py-14 sm:py-20">
-      <div class="mx-auto max-w-4xl">
+    <section class="section-wrap py-16 sm:py-20">
+      <div class="mx-auto max-w-3xl">
         <div
           v-if="submitted"
           class="rounded-2xl border border-teal-100 bg-teal-50 p-7 sm:p-10"
