@@ -9,6 +9,16 @@
           <p class="mt-1 text-sm">
             Betrouwbaar zorgvervoer, gepland rond u.
           </p>
+          <div class="mt-4 flex flex-col gap-2 text-sm sm:flex-row sm:gap-5">
+            <a
+              href="tel:+31681914785"
+              class="transition hover:text-white focus:outline-none focus:underline"
+            >+31 6 81914785</a>
+            <a
+              href="mailto:info@huppietaxi.nl"
+              class="transition hover:text-white focus:outline-none focus:underline"
+            >info@huppietaxi.nl</a>
+          </div>
         </div>
         <p class="text-sm">
           © {{ new Date().getFullYear() }} Huppie Taxi. Alle rechten voorbehouden.
