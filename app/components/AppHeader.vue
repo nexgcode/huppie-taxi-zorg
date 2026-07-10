@@ -4,6 +4,7 @@ const isMenuOpen = ref(false)
 const navigation = [
   { label: 'Veelgestelde vragen', to: '/#vragen' },
   { label: 'Voor zorgpartners', to: '/partners' },
+  { label: 'Word chauffeur', to: '/chauffeur-worden' },
   { label: 'Contact', to: '/contact' }
 ]
 </script>
