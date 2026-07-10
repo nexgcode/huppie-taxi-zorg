@@ -1,14 +1,4 @@
 <script setup lang="ts">
-const isMenuOpen = ref(false)
-const submitted = ref(false)
-
-const navigation = [
-  { label: 'Ziekenhuisvervoer', to: '/hospital-transport' },
-  { label: 'Medische afspraken', to: '/medical-appointments' },
-  { label: 'Voor zorgpartners', to: '/healthcare-partners' },
-  { label: 'Veelgestelde vragen', to: '/faq' }
-]
-
 const services = [
   { icon: 'i-lucide-building-2', title: 'Ziekenhuisvervoer', text: 'Een rustige, geplande rit van en naar uw ziekenhuisafspraak.' },
   { icon: 'i-lucide-stethoscope', title: 'Afspraken en klinieken', text: 'Betrouwbaar vervoer naar specialisten, klinieken en medische afspraken.' },
@@ -32,10 +22,6 @@ const faqs = [
   { label: 'Regelen jullie ook terugkerend vervoer?', content: 'Ja. Heeft u regelmatige afspraken voor behandeling, therapie of revalidatie? Vraag ons naar de mogelijkheden voor een vaste planning.' },
   { label: 'Hoe zit het met verzekering of vergoeding?', content: 'Dekking of vergoeding van vervoer kan afhangen van uw verzekeraar, zorgsituatie en toestemming. Neem contact op om de mogelijkheden te bespreken.' }
 ]
-
-function submitRequest() {
-  submitted.value = true
-}
 </script>
 
 <template>
@@ -45,68 +31,7 @@ function submitRequest() {
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:text-navy-900 focus:shadow-lg"
     >Ga naar inhoud</a>
 
-    <header class="border-b border-navy-900/10 bg-[#f7f8f6]">
-      <div class="section-wrap flex min-h-20 items-center justify-between gap-4">
-        <NuxtLink
-          to="/"
-          class="flex items-center gap-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-4"
-          aria-label="Huppie Taxi, startpagina"
-        >
-          <span class="flex size-10 items-center justify-center rounded-full bg-navy-900 text-lg font-bold text-white">H</span>
-          <span class="text-lg font-bold tracking-tight text-navy-900">Huppie <span class="font-normal">Taxi</span></span>
-        </NuxtLink>
-        <nav
-          class="hidden items-center gap-7 lg:flex"
-          aria-label="Hoofdnavigatie"
-        >
-          <NuxtLink
-            v-for="item in navigation"
-            :key="item.to"
-            :to="item.to"
-            class="text-sm font-medium text-navy-700 transition hover:text-teal-700 focus:outline-none focus:underline"
-          >{{ item.label }}</NuxtLink>
-        </nav>
-        <div class="hidden items-center gap-3 sm:flex">
-          <a
-            href="#contact"
-            class="text-sm font-bold text-navy-900 underline decoration-teal-500 decoration-2 underline-offset-4"
-          >Bel om een rit te regelen</a>
-          <UButton
-            to="#contact"
-            label="Rit aanvragen"
-            color="primary"
-            size="lg"
-          />
-        </div>
-        <UButton
-          class="sm:hidden"
-          color="neutral"
-          variant="ghost"
-          icon="i-lucide-menu"
-          aria-label="Menu openen"
-          @click="isMenuOpen = !isMenuOpen"
-        />
-      </div>
-      <nav
-        v-if="isMenuOpen"
-        class="border-t border-navy-900/10 px-5 py-4 sm:hidden"
-        aria-label="Mobiele navigatie"
-      >
-        <div class="flex flex-col gap-1">
-          <NuxtLink
-            v-for="item in navigation"
-            :key="item.to"
-            :to="item.to"
-            class="rounded-lg px-3 py-3 font-medium text-navy-900 hover:bg-navy-50"
-            @click="isMenuOpen = false"
-          >{{ item.label }}</NuxtLink><a
-            href="#contact"
-            class="mt-2 rounded-lg bg-navy-900 px-3 py-3 text-center font-bold text-white"
-            @click="isMenuOpen = false"
-          >Rit aanvragen</a>
-        </div>
-      </nav>
-    </header>
+    <AppHeader />
 
     <main id="inhoud">
       <section class="overflow-hidden bg-navy-900 pb-14 pt-14 text-white sm:pb-20 sm:pt-20">
@@ -123,7 +48,7 @@ function submitRequest() {
             </p>
             <div class="mt-9 flex flex-col gap-3 sm:flex-row">
               <UButton
-                to="#contact"
+                to="/rit-aanvragen"
                 label="Rit aanvragen"
                 trailing-icon="i-lucide-arrow-right"
                 color="primary"
@@ -274,7 +199,7 @@ function submitRequest() {
             </h2><p class="mt-6 max-w-md leading-7 text-slate-200">
               Heeft u regelmatig vervoer nodig voor behandeling, therapie of revalidatie? We helpen u een vaste planning af te stemmen op uw afspraken.
             </p><UButton
-              to="#contact"
+              to="/rit-aanvragen"
               label="Vast vervoer regelen"
               trailing-icon="i-lucide-arrow-right"
               color="primary"
@@ -330,7 +255,7 @@ function submitRequest() {
             </h3><p class="mt-3 leading-7 text-navy-700">
               Vertel ons over uw organisatie en de ritten die u wilt regelen.
             </p><UButton
-              to="#contact"
+              to="/rit-aanvragen"
               label="Partneraanvraag"
               variant="outline"
               color="neutral"
@@ -361,99 +286,27 @@ function submitRequest() {
         </div>
       </section>
 
-      <section
-        id="contact"
-        class="bg-navy-900 py-20 text-white sm:py-28"
-      >
-        <div class="section-wrap grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
+      <section class="bg-navy-900 py-20 text-white sm:py-28">
+        <div class="section-wrap grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <p class="eyebrow text-teal-200">
-              Een rit regelen
-            </p><h2 class="display-heading mt-4 text-4xl leading-tight sm:text-5xl">
-              Plan uw volgende rit.
-            </h2><p class="mt-6 max-w-md leading-7 text-slate-200">
-              Stuur uw ritgegevens en wij nemen contact met u op over de beschikbaarheid. Neem bij een medische noodsituatie contact op met de lokale hulpdiensten.
-            </p><div class="mt-8 border-l-2 border-teal-400 pl-5">
-              <p class="text-sm font-bold text-teal-100">
-                Liever bellen?
-              </p><p class="mt-1 text-lg font-bold">
-                Telefoonnummer wordt toegevoegd
-              </p><p class="mt-2 text-sm leading-6 text-slate-300">
-                Voeg voor publicatie het geverifieerde telefoonnummer van Huppie Taxi toe, zodat passagiers direct kunnen bellen.
-              </p>
-            </div>
-          </div><form
-            class="rounded-[1.5rem] bg-white p-6 text-navy-900 sm:p-8"
-            @submit.prevent="submitRequest"
-          >
-            <div
-              v-if="submitted"
-              class="rounded-xl bg-teal-50 p-5"
-            >
-              <h3 class="font-bold text-teal-700">
-                Bedankt voor uw aanvraag.
-              </h3><p class="mt-2 text-sm leading-6 text-navy-700">
-                Dit demoformulier is klaar om vóór de lancering aan een boekingsinbox of CRM te koppelen.
-              </p>
-            </div><template v-else>
-              <div class="grid gap-5 sm:grid-cols-2">
-                <UFormField
-                  label="Uw naam"
-                  required
-                >
-                  <UInput
-                    placeholder="Naam"
-                    size="xl"
-                    class="w-full"
-                    required
-                  />
-                </UFormField><UFormField
-                  label="Telefoonnummer"
-                  required
-                >
-                  <UInput
-                    type="tel"
-                    placeholder="Telefoonnummer"
-                    size="xl"
-                    class="w-full"
-                    required
-                  />
-                </UFormField>
-              </div><div class="mt-5 grid gap-5 sm:grid-cols-2">
-                <UFormField label="Ophaallocatie">
-                  <UInput
-                    placeholder="Adres of plaats"
-                    size="xl"
-                    class="w-full"
-                  />
-                </UFormField><UFormField label="Bestemming">
-                  <UInput
-                    placeholder="Ziekenhuis, kliniek of andere bestemming"
-                    size="xl"
-                    class="w-full"
-                  />
-                </UFormField>
-              </div><UFormField
-                label="Waarmee kunnen we helpen?"
-                class="mt-5"
-              >
-                <UTextarea
-                  placeholder="Afsprakendatum, gewenste ophaaltijd, retourrit of terugkerend vervoer..."
-                  :rows="4"
-                  class="w-full"
-                />
-              </UFormField><UButton
-                type="submit"
-                label="Ritaanvraag versturen"
-                trailing-icon="i-lucide-arrow-right"
-                color="primary"
-                size="xl"
-                class="mt-6 w-full justify-center"
-              /><p class="mt-4 text-center text-xs leading-5 text-navy-700">
-                Met dit verzoek vraagt u Huppie Taxi om contact met u op te nemen over uw vervoersbehoefte.
-              </p>
-            </template>
-          </form>
+              Een rit aanvragen
+            </p>
+            <h2 class="display-heading mt-4 text-4xl leading-tight sm:text-5xl">
+              Uw zorgreis begint met een duidelijke aanvraag.
+            </h2>
+            <p class="mt-6 max-w-2xl leading-7 text-slate-200">
+              Vul uw gegevens in via ons duidelijke aanvraagproces. U ziet precies welke informatie we nodig hebben om uw zorgvervoer te kunnen beoordelen.
+            </p>
+          </div>
+          <UButton
+            to="/rit-aanvragen"
+            label="Start uw aanvraag"
+            trailing-icon="i-lucide-arrow-right"
+            color="primary"
+            size="xl"
+            class="justify-center"
+          />
         </div>
       </section>
     </main>
@@ -473,12 +326,5 @@ function submitRequest() {
         </div>
       </div>
     </footer>
-    <a
-      href="#contact"
-      class="fixed bottom-4 left-4 right-4 z-40 flex min-h-14 items-center justify-center gap-2 rounded-xl bg-teal-600 px-5 font-bold text-white shadow-lg sm:hidden"
-    ><UIcon
-      name="i-lucide-phone"
-      class="size-5"
-    />Rit aanvragen of regelen</a>
   </div>
 </template>

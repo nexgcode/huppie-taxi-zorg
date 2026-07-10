@@ -14,6 +14,9 @@ importers:
       '@iconify-json/simple-icons':
         specifier: ^1.2.87
         version: 1.2.87
+      '@internationalized/date':
+        specifier: 3.12.1
+        version: 3.12.1
       '@nuxt/ui':
         specifier: ^4.9.0
         version: 4.9.0(469a4e6277bc2f92cb84d1d3478b94df)

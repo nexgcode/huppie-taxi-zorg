@@ -29,38 +29,19 @@ useSeoMeta({
 
 <template>
   <div>
-    <header class="border-b border-navy-900/10 bg-[#f7f8f6]">
-      <div class="section-wrap flex min-h-20 items-center justify-between gap-4">
-        <NuxtLink
-          to="/"
-          class="flex items-center gap-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-4"
-        ><span class="flex size-10 items-center justify-center rounded-full bg-navy-900 text-lg font-bold text-white">H</span><span class="text-lg font-bold tracking-tight text-navy-900">Huppie <span class="font-normal">Taxi</span></span></NuxtLink>
-        <UButton
-          to="/#contact"
-          label="Rit aanvragen"
-          color="primary"
-          size="lg"
-        />
-      </div>
-    </header>
+    <AppHeader />
 
     <main>
       <section class="bg-navy-900 py-18 text-white sm:py-24">
         <div class="section-wrap max-w-5xl">
-          <NuxtLink
-            to="/"
-            class="inline-flex items-center gap-2 text-sm font-bold text-teal-200 hover:text-white"
-          ><UIcon
-            name="i-lucide-arrow-left"
-            class="size-4"
-          />Terug naar startpagina</NuxtLink><p class="eyebrow mt-12 text-teal-200">
+          <p class="eyebrow mt-12 text-teal-200">
             {{ page.eyebrow }}
           </p><h1 class="display-heading mt-4 max-w-4xl text-5xl leading-[1.02] sm:text-6xl">
             {{ page.title }}
           </h1><p class="mt-7 max-w-2xl text-lg leading-8 text-slate-200">
             {{ page.description }}
           </p><UButton
-            to="/#contact"
+            to="/rit-aanvragen"
             :label="page.cta"
             trailing-icon="i-lucide-arrow-right"
             color="primary"
@@ -102,7 +83,7 @@ useSeoMeta({
           </h2><p class="mt-5 leading-7 text-navy-700">
             Dekking of vergoeding van vervoer kan afhangen van uw verzekeraar, zorgsituatie en toestemming. Neem contact op om de mogelijkheden te bespreken.
           </p><UButton
-            to="/#contact"
+            to="/rit-aanvragen"
             :label="page.cta"
             trailing-icon="i-lucide-arrow-right"
             color="primary"
