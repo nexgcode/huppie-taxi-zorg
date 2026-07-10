@@ -1,0 +1,1 @@
+Make sure to use Nuxt and Nuxt UI mcps when needed.
