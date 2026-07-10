@@ -2,15 +2,13 @@
 const isMenuOpen = ref(false)
 
 const navigation = [
-  { label: 'Ziekenhuisvervoer', to: '/hospital-transport' },
-  { label: 'Medische afspraken', to: '/medical-appointments' },
-  { label: 'Voor zorgpartners', to: '/healthcare-partners' },
-  { label: 'Veelgestelde vragen', to: '/faq' }
+  { label: 'Veelgestelde vragen', to: '/#vragen' },
+  { label: 'Contact', to: '/contact' }
 ]
 </script>
 
 <template>
-  <header class="border-b border-navy-900/10 bg-[#f7f8f6]">
+  <header class="border-b border-navy-900/10 bg-navy-50">
     <div class="section-wrap flex min-h-20 items-center justify-between gap-4">
       <NuxtLink
         to="/"
