@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 const step = ref(1)
 const submitted = ref(false)
+const insuranceSubmitAttempted = ref(false)
 const birthDate = shallowRef<CalendarDate | null>(null)
 const todayDate = today(getLocalTimeZone())
 const minBirthDate = todayDate.subtract({ years: 120 })
@@ -15,18 +16,21 @@ const form = reactive({
   email: '',
   phone: '',
   insurer: '',
-  policyNumber: '',
+  hasTransportAuthorisation: '',
   authorisationNumber: '',
-  consent: false
+  contactConsent: false
 })
 
 const insurers = [
-  'CZ',
-  'DSW',
-  'Menzis',
-  'VGZ',
-  'Zilveren Kruis',
-  'Anders'
+  'CZ', 'DSW', 'Menzis', 'VGZ', 'Zilveren Kruis', 'a.s.r.', 'Anderzorg', 'Bewuzt',
+  'CZdirect', 'De Friesland', 'FBTO', 'HollandZorg', 'IZA', 'IZZ', 'Just',
+  'Nationale-Nederlanden', 'OHRA', 'ONVZ', 'Salland', 'Univé', 'UnitedConsumers',
+  'VvAA', 'Zorg en Zekerheid', 'Anders'
+]
+
+const transportAuthorisationOptions = [
+  { label: 'Ja, ik heb al toestemming', value: 'yes' },
+  { label: 'Nee, of ik weet het niet', value: 'no' }
 ]
 
 const personalSchema = z.object({
@@ -44,9 +48,17 @@ const personalSchema = z.object({
 
 const insuranceSchema = z.object({
   insurer: z.string().min(1, 'Kies uw zorgverzekeraar.'),
-  policyNumber: z.string().trim().min(1, 'Vul uw polisnummer in.'),
-  authorisationNumber: z.string().trim().min(1, 'Vul uw machtigingsnummer in.'),
-  consent: z.boolean().refine(value => value, 'Uw toestemming is nodig om door te gaan.')
+  hasTransportAuthorisation: z.string().optional(),
+  authorisationNumber: z.string().trim(),
+  contactConsent: z.boolean()
+}).superRefine((value, ctx) => {
+  if (value.hasTransportAuthorisation === 'yes' && !value.contactConsent && !value.authorisationNumber) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['authorisationNumber'],
+      message: 'Vul uw machtigingsnummer in.'
+    })
+  }
 })
 
 usePageSeo({
@@ -62,12 +74,25 @@ defineOgImage('Huppie', {
 })
 
 const schema = computed(() => step.value === 1 ? personalSchema : insuranceSchema)
+const isStepOneComplete = computed(() => personalSchema.safeParse(form).success)
+const hasAuthorisationSelectionError = computed(() => insuranceSubmitAttempted.value && !form.hasTransportAuthorisation)
+
+watch(() => form.contactConsent, (wantsHelp) => {
+  if (wantsHelp) form.authorisationNumber = ''
+})
+
+watch(() => form.hasTransportAuthorisation, (hasAuthorisation) => {
+  if (hasAuthorisation === 'yes') form.contactConsent = false
+}, { flush: 'sync' })
 
 function continueToInsurance() {
   step.value = 2
 }
 
 function submitRequest() {
+  insuranceSubmitAttempted.value = true
+  if (!form.hasTransportAuthorisation) return
+
   submitted.value = true
 }
 </script>
@@ -94,9 +119,12 @@ function submitRequest() {
           class="mb-10 grid grid-cols-2 gap-3"
           aria-label="Voortgang aanvraag"
         >
-          <div
+          <button
+            type="button"
+            :aria-current="step === 1 ? 'step' : undefined"
             :class="step === 1 ? 'border-teal-600 bg-teal-50' : 'border-navy-900/15 bg-white'"
-            class="rounded-xl border p-4"
+            class="min-h-24 w-full cursor-pointer rounded-xl border p-4 text-left transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+            @click="step = 1"
           >
             <p class="text-xs font-bold uppercase tracking-[0.15em] text-teal-700">
               Stap 1
@@ -104,10 +132,14 @@ function submitRequest() {
             <p class="mt-1 font-bold text-navy-900">
               Persoonlijke gegevens
             </p>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
+            :aria-current="step === 2 ? 'step' : undefined"
             :class="step === 2 ? 'border-teal-600 bg-teal-50' : 'border-navy-900/15 bg-white'"
-            class="rounded-xl border p-4"
+            class="min-h-24 w-full cursor-pointer rounded-xl border p-4 text-left transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
+            :disabled="!isStepOneComplete"
+            @click="step = 2"
           >
             <p class="text-xs font-bold uppercase tracking-[0.15em] text-teal-700">
               Stap 2
@@ -115,7 +147,7 @@ function submitRequest() {
             <p class="mt-1 font-bold text-navy-900">
               Verzekering & toestemming
             </p>
-          </div>
+          </button>
         </div>
 
         <div
@@ -250,65 +282,88 @@ function submitRequest() {
               Verzekering & toestemming
             </h2>
             <p class="mt-4 leading-7 text-navy-700">
-              Met deze gegevens kunnen wij uw aanvraag voor zorgvervoer voorbereiden.
+              Regel eerst toestemming voor ziekenvervoer bij uw zorgverzekeraar. Daarna kunnen wij u helpen met het plannen van uw rit.
             </p>
 
-            <div class="mt-8 grid gap-5 sm:grid-cols-2">
+            <div class="mt-8">
               <UFormField
                 name="insurer"
                 label="Zorgverzekeraar"
                 required
               >
-                <USelect
+                <USelectMenu
                   v-model="form.insurer"
                   :items="insurers"
                   placeholder="Kies uw zorgverzekeraar"
-                  aria-required="true"
-                  size="xl"
-                  class="w-full"
-                />
-              </UFormField>
-              <UFormField
-                name="policyNumber"
-                label="Polisnummer"
-                required
-              >
-                <UInput
-                  v-model="form.policyNumber"
-                  autocomplete="off"
+                  :search-input="{ placeholder: 'Zoek uw zorgverzekeraar' }"
                   aria-required="true"
                   size="xl"
                   class="w-full"
                 />
               </UFormField>
             </div>
+            <div class="mt-5 rounded-xl border border-teal-100 bg-teal-50 p-5">
+              <p class="font-bold text-navy-900">
+                Vraag een vervoersmachtiging aan bij uw zorgverzekeraar.
+              </p>
+              <p class="mt-2 text-sm leading-6 text-navy-700">
+                Vraag naar het aanvraagformulier voor zittend ziekenvervoer of een vervoersmachtiging. Uw zorgverzekeraar beslist of uw vervoer wordt vergoed.
+              </p>
+              <p class="mt-3 text-sm font-medium leading-6 text-navy-900">
+                Kunt u het formulier niet vinden? Neem contact op met uw zorgverzekeraar of met ons; wij helpen u graag op weg.
+              </p>
+            </div>
             <UFormField
-              name="authorisationNumber"
-              label="Machtigingsnummer"
+              name="hasTransportAuthorisation"
+              label="Heeft u al toestemming voor ziekenvervoer?"
               required
+              :error="hasAuthorisationSelectionError ? 'Kies of u al toestemming voor ziekenvervoer heeft.' : false"
               class="mt-5"
             >
-              <UInput
-                v-model="form.authorisationNumber"
-                autocomplete="off"
+              <URadioGroup
+                v-model="form.hasTransportAuthorisation"
+                :items="transportAuthorisationOptions"
                 aria-required="true"
-                size="xl"
-                class="w-full"
+                :aria-invalid="hasAuthorisationSelectionError"
+                :color="hasAuthorisationSelectionError ? 'error' : 'primary'"
+                orientation="vertical"
+                size="lg"
               />
             </UFormField>
 
+            <div
+              v-if="form.hasTransportAuthorisation === 'yes'"
+              class="mt-5 rounded-xl border border-teal-100 bg-teal-50 p-5"
+            >
+              <UFormField
+                name="authorisationNumber"
+                label="Machtigingsnummer"
+                required
+              >
+                <UInput
+                  v-model="form.authorisationNumber"
+                  autocomplete="off"
+                  aria-required="true"
+                  size="xl"
+                  class="w-full"
+                />
+              </UFormField>
+              <p class="mt-3 text-sm leading-6 text-navy-700">
+                U vindt dit nummer in de brief of e-mail van uw zorgverzekeraar.
+              </p>
+            </div>
+
             <UFormField
-              name="consent"
+              v-if="form.hasTransportAuthorisation === 'no'"
               class="mt-6 rounded-xl bg-navy-50 p-5"
             >
               <UCheckbox
-                v-model="form.consent"
-                aria-required="true"
-                label="Ik geef Huppie Taxi toestemming om namens mij contact op te nemen met mijn zorgverzekeraar over deze aanvraag voor zorgvervoer."
+                v-model="form.contactConsent"
+                label="Ik wil dat Huppie Taxi mij helpt met het regelen van deze aanvraag."
                 size="lg"
               />
               <p class="mt-3 pl-8 text-sm leading-6 text-navy-700">
-                Deze toestemming geldt alleen voor het bespreken en regelen van de zorgvervoeraanvraag die u hier indient.
+                Dit geeft Huppie Taxi geen algemene machtiging. Uw zorgverzekeraar kan een eigen formulier of toestemming vragen voordat zij gegevens met ons bespreken.
               </p>
             </UFormField>
 
