@@ -35,6 +35,12 @@ const form = reactive({
   appointmentDate: null as unknown,
   time: ''
 })
+const forms = useFormsStore()
+
+async function submit() {
+  await forms.submitPartner({ email: form.email, appointment_date: appointmentDate.value?.toString() || '', appointment_time: form.time })
+  submitted.value = true
+}
 
 usePageSeo({
   title: 'Partner worden voor zorgvervoer',
@@ -137,7 +143,7 @@ defineOgImage('Huppie', {
             Bedankt voor uw interesse.
           </h2>
           <p class="mt-4 max-w-xl leading-7 text-navy-700">
-            Deze demo verstuurt uw aanvraag nog niet. Koppel vóór publicatie een beveiligd contactproces om inzendingen te verwerken.
+            We hebben uw aanvraag ontvangen en nemen contact met u op.
           </p>
         </div>
 
@@ -147,7 +153,7 @@ defineOgImage('Huppie', {
           :state="form"
           :validate-on="['blur']"
           class="rounded-[1.5rem] border border-navy-900/10 bg-white p-6 shadow-sm sm:p-10"
-          @submit="submitted = true"
+          @submit="submit"
         >
           <p class="eyebrow">
             Partner worden
@@ -215,8 +221,16 @@ defineOgImage('Huppie', {
             trailing-icon="i-lucide-arrow-right"
             color="primary"
             size="xl"
+            :loading="forms.submitting"
             class="mt-8 w-full justify-center sm:w-auto"
           />
+          <p
+            v-if="forms.error"
+            class="mt-4 text-sm font-medium text-red-700"
+            role="alert"
+          >
+            {{ forms.error }}
+          </p>
         </UForm>
       </div>
     </section>

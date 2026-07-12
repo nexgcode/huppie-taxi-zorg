@@ -1,9 +1,19 @@
+/* eslint-disable nuxt/nuxt-config-keys-order */
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/eslint', '@nuxt/ui', 'nuxt-umami', '@nuxtjs/seo'],
+  modules: ['@nuxt/eslint', '@nuxt/ui', 'nuxt-umami', '@nuxtjs/seo', '@nuxtjs/supabase', '@pinia/nuxt'],
 
   devtools: {
     enabled: true
+  },
+
+  runtimeConfig: {
+    supabase: {
+      // Set with NUXT_SUPABASE_SECRET_KEY. Never expose this in public config.
+      secretKey: ''
+    },
+    telegramBotToken: '',
+    telegramChatId: ''
   },
 
   css: ['~/assets/css/main.css'],
@@ -21,6 +31,7 @@ export default defineNuxtConfig({
     '/partners': { prerender: true },
     '/chauffeur-worden': { prerender: true },
     '/rit-aanvragen': { robots: false },
+    '/admin/**': { robots: false },
     '/robots.txt': { prerender: true },
     '/sitemap.xml': { prerender: true }
   },
@@ -43,6 +54,16 @@ export default defineNuxtConfig({
   sitemap: {
     autoI18n: false,
     exclude: ['/rit-aanvragen']
+  },
+  supabase: {
+    redirect: false
+  },
+
+  fonts: {
+    families: [
+      { name: 'Arial', src: '/fonts/arial-regular.woff2', global: true },
+      { name: 'Helvetica Neue', src: '/fonts/helvetica-neue-regular.woff2', global: true }
+    ]
   },
 
   umami: {

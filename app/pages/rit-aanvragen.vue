@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 const step = ref(1)
 const submitted = ref(false)
+const forms = useFormsStore()
 const insuranceSubmitAttempted = ref(false)
 const birthDate = shallowRef<CalendarDate | null>(null)
 const todayDate = today(getLocalTimeZone())
@@ -89,10 +90,20 @@ function continueToInsurance() {
   step.value = 2
 }
 
-function submitRequest() {
+async function submitRequest() {
   insuranceSubmitAttempted.value = true
   if (!form.hasTransportAuthorisation) return
-
+  await forms.submitRide({
+    first_name: form.firstName,
+    last_name: form.lastName,
+    birth_date: birthDate.value?.toString() || '',
+    email: form.email,
+    phone: form.phone,
+    insurer: form.insurer,
+    has_transport_authorisation: form.hasTransportAuthorisation === 'yes',
+    authorisation_number: form.hasTransportAuthorisation === 'yes' ? form.authorisationNumber : null,
+    contact_consent: form.contactConsent
+  })
   submitted.value = true
 }
 </script>
@@ -162,7 +173,7 @@ function submitRequest() {
             Bedankt voor uw aanvraag.
           </h2>
           <p class="mt-4 max-w-xl leading-7 text-navy-700">
-            Deze demo slaat of verstuurt uw persoonsgegevens en verzekeringsgegevens nog niet op. Koppel vóór publicatie een beveiligd aanvraagproces om inzendingen te verwerken.
+            We hebben uw aanvraag ontvangen en nemen contact met u op over de vervolgstappen.
           </p>
           <UButton
             to="/"
@@ -270,6 +281,7 @@ function submitRequest() {
               trailing-icon="i-lucide-arrow-right"
               color="primary"
               size="xl"
+              :loading="forms.submitting"
               class="mt-8 w-full justify-center sm:w-auto"
             />
           </template>
@@ -382,8 +394,16 @@ function submitRequest() {
                 trailing-icon="i-lucide-arrow-right"
                 color="primary"
                 size="xl"
+                :loading="forms.submitting"
                 class="justify-center"
               />
+              <p
+                v-if="forms.error"
+                class="col-span-2 mt-2 text-sm font-medium text-red-700"
+                role="alert"
+              >
+                {{ forms.error }}
+              </p>
             </div>
           </template>
         </UForm>

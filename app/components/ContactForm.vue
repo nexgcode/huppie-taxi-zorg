@@ -22,6 +22,12 @@ const schema = z.object({
 
 const submitted = ref(false)
 const form = reactive({ name: '', email: '', phone: '', message: '' })
+const forms = useFormsStore()
+
+async function submit() {
+  await forms.submitContact({ ...form })
+  submitted.value = true
+}
 </script>
 
 <template>
@@ -37,7 +43,7 @@ const form = reactive({ name: '', email: '', phone: '', message: '' })
       {{ props.successTitle }}
     </h2>
     <p class="mt-4 max-w-xl leading-7 text-navy-700">
-      Deze demo verstuurt uw bericht nog niet. Koppel vóór publicatie een beveiligd contactproces om inzendingen te verwerken.
+      We hebben uw bericht ontvangen en nemen zo snel mogelijk contact met u op.
     </p>
   </div>
 
@@ -47,7 +53,7 @@ const form = reactive({ name: '', email: '', phone: '', message: '' })
     :state="form"
     :validate-on="['blur']"
     class="rounded-[1.5rem] border border-navy-900/10 bg-white p-6 shadow-sm sm:p-10"
-    @submit="submitted = true"
+    @submit="submit"
   >
     <p class="eyebrow">
       {{ props.eyebrow }}
@@ -124,7 +130,15 @@ const form = reactive({ name: '', email: '', phone: '', message: '' })
       trailing-icon="i-lucide-send"
       color="primary"
       size="xl"
+      :loading="forms.submitting"
       class="mt-8 w-full justify-center sm:w-auto"
     />
+    <p
+      v-if="forms.error"
+      class="mt-4 text-sm font-medium text-red-700"
+      role="alert"
+    >
+      {{ forms.error }}
+    </p>
   </UForm>
 </template>

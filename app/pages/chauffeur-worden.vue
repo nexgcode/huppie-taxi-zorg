@@ -20,6 +20,7 @@ const schema = z.object({
 })
 
 const submitted = ref(false)
+const forms = useFormsStore()
 const form = reactive({
   name: '',
   company: '',
@@ -35,6 +36,26 @@ const form = reactive({
   certificates: [] as File[],
   termsAccepted: false
 })
+
+async function submit() {
+  if (!form.driverLicense || !form.driverCard || !form.vog) return
+  await forms.submitDriver({
+    name: form.name,
+    company: form.company,
+    phone: form.phone,
+    email: form.email,
+    kvk_number: form.kvkNumber,
+    tx_certificate: form.txCertificate === 'Ja',
+    license_plate: form.licensePlate,
+    vehicle: form.vehicle
+  }, [
+    { type: 'driver_license', file: form.driverLicense },
+    { type: 'driver_card', file: form.driverCard },
+    { type: 'vog', file: form.vog },
+    ...form.certificates.map(file => ({ type: 'certificate' as const, file }))
+  ])
+  submitted.value = true
+}
 
 usePageSeo({
   title: 'Word chauffeur in zorgvervoer',
@@ -78,7 +99,7 @@ defineOgImage('Huppie', {
             Bedankt voor uw aanmelding.
           </h2>
           <p class="mt-4 max-w-xl leading-7 text-navy-700">
-            Deze demo verstuurt uw gegevens en documenten nog niet. Koppel vóór publicatie een beveiligd aanvraagproces om inzendingen te verwerken.
+            We hebben uw aanmelding en documenten ontvangen en nemen contact met u op.
           </p>
         </div>
 
@@ -88,7 +109,7 @@ defineOgImage('Huppie', {
           :state="form"
           :validate-on="['blur']"
           class="rounded-[1.5rem] border border-navy-900/10 bg-white p-6 shadow-sm sm:p-10"
-          @submit="submitted = true"
+          @submit="submit"
         >
           <div>
             <p class="eyebrow">
@@ -316,8 +337,16 @@ defineOgImage('Huppie', {
             trailing-icon="i-lucide-arrow-right"
             color="primary"
             size="xl"
+            :loading="forms.submitting"
             class="mt-8 w-full justify-center sm:w-auto"
           />
+          <p
+            v-if="forms.error"
+            class="mt-4 text-sm font-medium text-red-700"
+            role="alert"
+          >
+            {{ forms.error }}
+          </p>
         </UForm>
       </div>
     </section>
