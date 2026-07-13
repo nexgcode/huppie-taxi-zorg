@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import type { Database } from '~/types/database.types'
+import { adminForms, type AdminFormTable, useFormsStore } from '~/stores/forms'
+
 definePageMeta({ layout: 'admin', middleware: 'admin' })
 
 const route = useRoute()
-const supabase = useSupabaseClient()
-const { cache } = useAdminSubmissions()
+const supabase = useSupabaseClient<Database>()
+const forms = useFormsStore()
 
 const table = computed<AdminFormTable | null>(() => {
   const type = typeof route.params.type === 'string' ? route.params.type : ''
@@ -11,6 +14,8 @@ const table = computed<AdminFormTable | null>(() => {
 })
 const updating = ref(false)
 const error = ref('')
+const loading = ref(true)
+const submission = ref<Record<string, unknown> | null>(null)
 
 const title = computed(() => table.value ? adminForms[table.value] : 'Inzending')
 const fields = computed(() => Object.entries(submission.value || {}).filter(([key]) => !['id', 'status', 'created_at', 'telegram_notified_at', 'telegram_notification_error'].includes(key)))
@@ -27,18 +32,32 @@ function formatValue(key: string, value: unknown) {
   return String(value)
 }
 
-const { data: submission, error: loadError } = await useAsyncData(`admin-submission-${route.params.type}-${route.params.id}`, async () => {
+async function loadSubmission() {
   if (!table.value || typeof route.params.id !== 'string') {
-    throw createError({ statusCode: 404, statusMessage: 'Inzending niet gevonden.' })
+    error.value = 'Deze inzending is niet gevonden.'
+    loading.value = false
+    return
   }
-  const cachedSubmission = cache.value[table.value].find(item => item.id === route.params.id)
-  if (cachedSubmission) return cachedSubmission
-  const { data, error: loadError } = await supabase.from(table.value).select('*').eq('id', route.params.id).single()
-  if (loadError || !data) throw createError({ statusCode: 404, statusMessage: 'Inzending niet gevonden.' })
-  return data as Record<string, unknown>
-})
 
-if (loadError.value) throw loadError.value
+  const cachedSubmission = forms.cache[table.value].find(item => item.id === route.params.id)
+  if (cachedSubmission) {
+    submission.value = cachedSubmission
+    loading.value = false
+    return
+  }
+
+  try {
+    const { data, error: requestError } = await supabase.from(table.value).select('*').eq('id', route.params.id).single()
+    if (requestError || !data) error.value = 'Deze inzending kon niet worden geladen. Probeer het opnieuw.'
+    else submission.value = data as Record<string, unknown>
+  } catch {
+    error.value = 'Deze inzending kon niet worden geladen. Probeer het opnieuw.'
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(loadSubmission)
 
 async function markHandled() {
   if (!table.value || typeof route.params.id !== 'string') return
@@ -52,7 +71,7 @@ async function markHandled() {
   }
   if (submission.value) submission.value.status = 'handled'
   if (table.value) {
-    const cachedSubmission = cache.value[table.value].find(item => item.id === route.params.id)
+    const cachedSubmission = forms.cache[table.value].find(item => item.id === route.params.id)
     if (cachedSubmission) cachedSubmission.status = 'handled'
   }
 }
@@ -69,7 +88,27 @@ async function markHandled() {
     />
 
     <section
-      v-if="submission"
+      v-if="loading"
+      class="mt-5"
+      aria-busy="true"
+      aria-label="Inzending laden"
+    >
+      <div class="border-b border-navy-900/10 pb-6">
+        <USkeleton class="h-4 w-24" />
+        <USkeleton class="mt-4 h-10 w-64" />
+        <USkeleton class="mt-4 h-6 w-72" />
+      </div>
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <USkeleton
+          v-for="index in 6"
+          :key="index"
+          class="h-28 w-full rounded-xl"
+        />
+      </div>
+    </section>
+
+    <section
+      v-else-if="submission"
       class="mt-5"
     >
       <div class="flex flex-wrap items-start justify-between gap-5 border-b border-navy-900/10 pb-6">
@@ -123,5 +162,13 @@ async function markHandled() {
         {{ error }}
       </p>
     </section>
+
+    <p
+      v-else
+      class="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-red-800"
+      role="alert"
+    >
+      {{ error || 'Deze inzending is niet gevonden.' }}
+    </p>
   </main>
 </template>

@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 const step = ref(1)
 const submitted = ref(false)
-const forms = useFormsStore()
+const forms = useForms()
 const insuranceSubmitAttempted = ref(false)
 const birthDate = shallowRef<CalendarDate | null>(null)
 const todayDate = today(getLocalTimeZone())

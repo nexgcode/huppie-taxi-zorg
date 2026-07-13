@@ -22,7 +22,7 @@ const schema = z.object({
 
 const submitted = ref(false)
 const form = reactive({ name: '', email: '', phone: '', message: '' })
-const forms = useFormsStore()
+const forms = useForms()
 
 async function submit() {
   await forms.submitContact({ ...form })

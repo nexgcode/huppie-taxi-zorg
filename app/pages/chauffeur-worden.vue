@@ -20,7 +20,7 @@ const schema = z.object({
 })
 
 const submitted = ref(false)
-const forms = useFormsStore()
+const forms = useForms()
 const form = reactive({
   name: '',
   company: '',

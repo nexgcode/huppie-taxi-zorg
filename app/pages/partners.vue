@@ -35,7 +35,7 @@ const form = reactive({
   appointmentDate: null as unknown,
   time: ''
 })
-const forms = useFormsStore()
+const forms = useForms()
 
 async function submit() {
   await forms.submitPartner({ email: form.email, appointment_date: appointmentDate.value?.toString() || '', appointment_time: form.time })

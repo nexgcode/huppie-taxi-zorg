@@ -1,8 +1,10 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin' })
 
-const { loadAll } = useAdminSubmissions()
-const { data: sections } = await useAsyncData('admin-submission-sections', loadAll)
+const forms = useFormsStore()
+const { error, loading, sections } = storeToRefs(forms)
+
+onMounted(forms.loadAll)
 </script>
 
 <template>
@@ -19,9 +21,42 @@ const { data: sections } = await useAsyncData('admin-submission-sections', loadA
       </p>
     </header>
 
-    <div class="mt-8 grid gap-5 lg:grid-cols-2">
+    <div
+      v-if="loading"
+      class="mt-8 grid gap-5 lg:grid-cols-2"
+      aria-busy="true"
+      aria-label="Inzendingen laden"
+    >
       <section
-        v-for="section in sections || []"
+        v-for="index in 4"
+        :key="index"
+        class="rounded-2xl border border-navy-900/10 bg-white p-5 shadow-sm sm:p-6"
+      >
+        <div class="flex items-center justify-between gap-4">
+          <USkeleton class="h-6 w-40" />
+          <USkeleton class="h-6 w-8 rounded-full" />
+        </div>
+        <div class="mt-5 space-y-3">
+          <USkeleton class="h-20 w-full rounded-xl" />
+          <USkeleton class="h-20 w-full rounded-xl" />
+        </div>
+      </section>
+    </div>
+
+    <p
+      v-else-if="error"
+      class="mt-8 rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-red-800"
+      role="alert"
+    >
+      {{ error }}
+    </p>
+
+    <div
+      v-else
+      class="mt-8 grid gap-5 lg:grid-cols-2"
+    >
+      <section
+        v-for="section in sections"
         :key="section.table"
         class="rounded-2xl border border-navy-900/10 bg-white p-5 shadow-sm sm:p-6"
       >

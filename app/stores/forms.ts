@@ -1,59 +1,55 @@
-import type { TablesInsert } from '~/types/database.types'
+import type { Database } from '~/types/database.types'
 
-type FormType = 'contact' | 'ride' | 'partner' | 'driver'
-type DriverDocumentType = 'driver_license' | 'driver_card' | 'vog' | 'certificate'
+export const adminForms = {
+  contact_submissions: 'Contactformulier',
+  ride_requests: 'Ritaanvraag',
+  partner_requests: 'Partneraanvraag',
+  driver_applications: 'Chauffeursaanmelding'
+} as const
 
-type FormPayloads = {
-  contact: TablesInsert<'contact_submissions'>
-  ride: TablesInsert<'ride_requests'>
-  partner: TablesInsert<'partner_requests'>
-  driver: TablesInsert<'driver_applications'>
-}
+export type AdminFormTable = keyof typeof adminForms
+export type AdminSubmission = Record<string, unknown> & { id: string, created_at: string, status: string }
 
-type DriverDocument = { type: DriverDocumentType, file: File }
+const tables = Object.keys(adminForms) as AdminFormTable[]
 
 export const useFormsStore = defineStore('forms', () => {
-  const submitting = ref(false)
+  const cache = ref<Record<AdminFormTable, AdminSubmission[]>>({
+    contact_submissions: [],
+    ride_requests: [],
+    partner_requests: [],
+    driver_applications: []
+  })
+  const loaded = ref(false)
+  const loading = ref(true)
   const error = ref<string | null>(null)
 
-  async function submit<T>(action: () => Promise<T>) {
-    submitting.value = true
+  const sections = computed(() => {
+    return tables.map(table => ({ title: adminForms[table], table, items: cache.value[table] }))
+  })
+
+  async function loadAll() {
+    if (loaded.value) {
+      loading.value = false
+      return
+    }
+
+    loading.value = true
     error.value = null
+    const supabase = useSupabaseClient<Database>()
     try {
-      return await action()
-    } catch (caught) {
-      error.value = 'Er is iets misgegaan. Probeer het later opnieuw.'
-      throw caught
+      const results = await Promise.all(tables.map(async (table) => {
+        const { data, error: requestError } = await supabase.from(table).select('*').order('created_at', { ascending: false })
+        if (requestError) throw requestError
+        return [table, data as unknown as AdminSubmission[]] as const
+      }))
+      for (const [table, submissions] of results) cache.value[table] = submissions
+      loaded.value = true
+    } catch {
+      error.value = 'De inzendingen konden niet worden geladen. Probeer de pagina opnieuw te laden.'
     } finally {
-      submitting.value = false
+      loading.value = false
     }
   }
 
-  function submitForm<T extends Exclude<FormType, 'driver'>>(type: T, payload: FormPayloads[T]) {
-    return submit(() => $fetch('/api/forms', { method: 'POST', body: { type, payload } }))
-  }
-
-  function submitContact(payload: FormPayloads['contact']) {
-    return submitForm('contact', payload)
-  }
-
-  function submitRide(payload: FormPayloads['ride']) {
-    return submitForm('ride', payload)
-  }
-
-  function submitPartner(payload: FormPayloads['partner']) {
-    return submitForm('partner', payload)
-  }
-
-  function submitDriver(payload: FormPayloads['driver'], documents: DriverDocument[]) {
-    return submit(async () => {
-      const body = new FormData()
-      body.set('type', 'driver')
-      body.set('payload', JSON.stringify(payload))
-      for (const document of documents) body.append(document.type, document.file)
-      return await $fetch('/api/forms', { method: 'POST', body })
-    })
-  }
-
-  return { submitting, error, submitContact, submitRide, submitPartner, submitDriver }
+  return { cache, loaded, loading, error, sections, loadAll }
 })
