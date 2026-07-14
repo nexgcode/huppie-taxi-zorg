@@ -9,7 +9,8 @@
     "binding": "ASSETS"
   },
   "vars": {
-    "NUXT_PUBLIC_SUPABASE_URL": "https://irykgouowbtfdpugbatb.supabase.co"
+    "NUXT_PUBLIC_SUPABASE_URL": "https://irykgouowbtfdpugbatb.supabase.co",
+    "NUXT_PUBLIC_SUPABASE_KEY": "sb_publishable_n_PsJ5cX6n5KBR00sxW60w_JeuPmTpl"
   },
   "secrets": {
     "required": [

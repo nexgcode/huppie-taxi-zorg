@@ -8,10 +8,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    supabase: {
-      // Set with NUXT_SUPABASE_SECRET_KEY. Never expose this in public config.
-      secretKey: ''
-    },
     telegramBotToken: '',
     telegramChatId: ''
   },
