@@ -1,7 +1,7 @@
 import type { TablesInsert } from '~/types/database.types'
 
 type FormType = 'contact' | 'ride' | 'partner' | 'driver'
-type DriverDocumentType = 'driver_license' | 'driver_card' | 'vog' | 'certificate'
+type DriverDocumentType = 'driver_license' | 'driver_card'
 
 type FormPayloads = {
   contact: TablesInsert<'contact_submissions'>

@@ -13,7 +13,7 @@ const rideSchema = z.object({ first_name: z.string().trim().min(1), last_name: z
 const partnerSchema = z.object({ email: z.string().trim().email(), appointment_date: z.string().date(), appointment_time: z.string().time() })
 const driverSchema = z.object({ name: z.string().trim().min(1), company: z.string().trim().min(1), phone: z.string().trim().min(1), email: z.string().trim().email(), kvk_number: z.string().trim().min(1), tx_certificate: z.boolean(), license_plate: z.string().trim().min(1), vehicle: z.string().trim().min(1) })
 
-const documentTypes = new Set(['driver_license', 'driver_card', 'vog', 'certificate'])
+const documentTypes = new Set(['driver_license', 'driver_card'])
 const permittedContentTypes = new Set(['application/pdf', 'image/jpeg', 'image/png', 'image/webp'])
 
 function adminClient(event: H3Event) {
@@ -71,12 +71,12 @@ export default defineEventHandler(async (event) => {
 
   const data = driverSchema.parse(payload) satisfies TablesInsert<'driver_applications'>
   const documents = (multipart || []).filter(part => part.filename && documentTypes.has(part.name || ''))
-  if (!['driver_license', 'driver_card', 'vog'].every(required => documents.some(document => document.name === required))) throw createError({ statusCode: 400, statusMessage: 'Vereiste documenten ontbreken.' })
+  if (!['driver_license', 'driver_card'].every(required => documents.some(document => document.name === required))) throw createError({ statusCode: 400, statusMessage: 'Vereiste documenten ontbreken.' })
   if (documents.some(document => !document.type || !permittedContentTypes.has(document.type) || document.data.byteLength > 10 * 1024 * 1024)) throw createError({ statusCode: 400, statusMessage: 'Een document is ongeldig of te groot.' })
   const { data: application, error } = await client.from('driver_applications').insert(data).select('id').single()
   if (error) throw createError({ statusCode: 500, statusMessage: 'Opslaan van de chauffeursaanmelding is mislukt.' })
   for (const document of documents) {
-    const documentType = document.name as 'driver_license' | 'driver_card' | 'vog' | 'certificate'
+    const documentType = document.name as 'driver_license' | 'driver_card'
     const contentType = document.type as string
     const extension = document.filename?.split('.').pop()?.replace(/[^a-z0-9]/gi, '') || 'bin'
     const path = `${application.id}/${crypto.randomUUID()}.${extension}`

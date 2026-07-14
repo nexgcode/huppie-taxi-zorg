@@ -14,8 +14,6 @@ const schema = z.object({
   vehicle: z.string().trim().min(1, 'Vul merk en model in.'),
   driverLicense: z.unknown().refine(isFile, 'Upload uw rijbewijs.'),
   driverCard: z.unknown().refine(isFile, 'Upload uw chauffeurskaart.'),
-  vog: z.unknown().refine(isFile, 'Upload uw VOG.'),
-  certificates: z.array(z.unknown()).min(1, 'Upload uw aanvullende certificaten.'),
   termsAccepted: z.boolean().refine(value => value, 'U moet de voorwaarden accepteren.')
 })
 
@@ -32,13 +30,11 @@ const form = reactive({
   vehicle: '',
   driverLicense: null as File | null,
   driverCard: null as File | null,
-  vog: null as File | null,
-  certificates: [] as File[],
   termsAccepted: false
 })
 
 async function submit() {
-  if (!form.driverLicense || !form.driverCard || !form.vog) return
+  if (!form.driverLicense || !form.driverCard) return
   await forms.submitDriver({
     name: form.name,
     company: form.company,
@@ -50,9 +46,7 @@ async function submit() {
     vehicle: form.vehicle
   }, [
     { type: 'driver_license', file: form.driverLicense },
-    { type: 'driver_card', file: form.driverCard },
-    { type: 'vog', file: form.vog },
-    ...form.certificates.map(file => ({ type: 'certificate' as const, file }))
+    { type: 'driver_card', file: form.driverCard }
   ])
   submitted.value = true
 }
@@ -279,39 +273,6 @@ defineOgImage('Huppie', {
                   variant="area"
                   size="xl"
                   label="Kies uw chauffeurskaart"
-                  description="PDF, JPG of PNG"
-                  class="w-full"
-                />
-              </UFormField>
-              <UFormField
-                name="vog"
-                label="Upload uw VOG"
-                required
-              >
-                <UFileUpload
-                  v-model="form.vog"
-                  accept="application/pdf,image/*"
-                  aria-required="true"
-                  variant="area"
-                  size="xl"
-                  label="Kies uw VOG"
-                  description="PDF, JPG of PNG"
-                  class="w-full"
-                />
-              </UFormField>
-              <UFormField
-                name="certificates"
-                label="Upload uw aanvullende certificaten"
-                required
-              >
-                <UFileUpload
-                  v-model="form.certificates"
-                  multiple
-                  accept="application/pdf,image/*"
-                  aria-required="true"
-                  variant="area"
-                  size="xl"
-                  label="Kies uw certificaten"
                   description="PDF, JPG of PNG"
                   class="w-full"
                 />

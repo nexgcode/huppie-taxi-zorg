@@ -65,7 +65,7 @@ create table public.driver_application_documents (
   id uuid primary key default gen_random_uuid(),
   application_id uuid not null references public.driver_applications(id) on delete cascade,
   created_at timestamptz not null default now(),
-  document_type text not null check (document_type in ('driver_license', 'driver_card', 'vog', 'certificate')),
+  document_type text not null check (document_type in ('driver_license', 'driver_card')),
   object_path text not null unique,
   original_filename text not null,
   content_type text not null,
