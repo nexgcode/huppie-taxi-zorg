@@ -35,11 +35,35 @@
 
 <script setup lang="ts">
 const services = [
-  { icon: 'i-lucide-building-2', title: 'Ziekenhuisvervoer', text: 'Een rustige, geplande rit van en naar uw ziekenhuisafspraak.' },
-  { icon: 'i-lucide-stethoscope', title: 'Afspraken en klinieken', text: 'Betrouwbaar vervoer naar specialisten, klinieken en medische afspraken.' },
-  { icon: 'i-lucide-heart-pulse', title: 'Therapie en revalidatie', text: 'Comfortabele ritten voor therapie, revalidatie en behandelafspraken.' },
-  { icon: 'i-lucide-calendar-check', title: 'Vaste zorgritten', text: 'Regelmatige ophaalmomenten afgestemd op uw terugkerende afspraken.' },
-  { icon: 'i-lucide-user-round', title: 'Vervoer voor ouderen', text: 'Respectvol deur-tot-deurvervoer voor ouderen en hun familie.' },
-  { icon: 'i-lucide-rotate-ccw', title: 'Retourritten', text: 'Plan uw heen- en terugreis samen, vooraf en overzichtelijk.' },
+  {
+    icon: 'i-lucide-building-2',
+    title: 'Ziekenhuisvervoer',
+    text: 'Een rustige, geplande rit van en naar uw ziekenhuisafspraak.',
+  },
+  {
+    icon: 'i-lucide-stethoscope',
+    title: 'Afspraken en klinieken',
+    text: 'Betrouwbaar vervoer naar specialisten, klinieken en medische afspraken.',
+  },
+  {
+    icon: 'i-lucide-heart-pulse',
+    title: 'Therapie en revalidatie',
+    text: 'Comfortabele ritten voor therapie, revalidatie en behandelafspraken.',
+  },
+  {
+    icon: 'i-lucide-calendar-check',
+    title: 'Vaste zorgritten',
+    text: 'Regelmatige ophaalmomenten afgestemd op uw terugkerende afspraken.',
+  },
+  {
+    icon: 'i-lucide-user-round',
+    title: 'Vervoer voor ouderen',
+    text: 'Respectvol deur-tot-deurvervoer voor ouderen en hun familie.',
+  },
+  {
+    icon: 'i-lucide-rotate-ccw',
+    title: 'Retourritten',
+    text: 'Plan uw heen- en terugreis samen, vooraf en overzichtelijk.',
+  },
 ];
 </script>

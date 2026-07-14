@@ -252,7 +252,8 @@
 <script setup lang="ts">
 import { z } from 'zod';
 
-const isFile = (value: unknown) => typeof File !== 'undefined' && value instanceof File;
+const isFile = (value: unknown) =>
+  typeof File !== 'undefined' && value instanceof File;
 
 const schema = z.object({
   name: z.string().trim().min(1, 'Vul uw volledige naam in.'),
@@ -260,12 +261,19 @@ const schema = z.object({
   phone: z.string().trim().min(1, 'Vul uw telefoonnummer in.'),
   email: z.string().trim().email('Vul een geldig e-mailadres in.'),
   kvkNumber: z.string().trim().min(1, 'Vul uw KVK-nummer in.'),
-  txCertificate: z.string().refine((value) => value === 'Ja' || value === 'Nee', 'Kies of u een TX-keurmerk heeft.'),
+  txCertificate: z
+    .string()
+    .refine(
+      (value) => value === 'Ja' || value === 'Nee',
+      'Kies of u een TX-keurmerk heeft.',
+    ),
   licensePlate: z.string().trim().min(1, 'Vul uw kenteken in.'),
   vehicle: z.string().trim().min(1, 'Vul merk en model in.'),
   driverLicense: z.unknown().refine(isFile, 'Upload uw rijbewijs.'),
   driverCard: z.unknown().refine(isFile, 'Upload uw chauffeurskaart.'),
-  termsAccepted: z.boolean().refine((value) => value, 'U moet de voorwaarden accepteren.'),
+  termsAccepted: z
+    .boolean()
+    .refine((value) => value, 'U moet de voorwaarden accepteren.'),
 });
 
 const submitted = ref(false);
@@ -304,12 +312,14 @@ async function submit() {
 
 usePageSeo({
   title: 'Word chauffeur in zorgvervoer',
-  description: 'Meld u aan als chauffeur bij Huppie Taxi en rijd zorgvervoer met aandacht voor cliënten en duidelijke planning.',
+  description:
+    'Meld u aan als chauffeur bij Huppie Taxi en rijd zorgvervoer met aandacht voor cliënten en duidelijke planning.',
   path: '/chauffeur-worden',
 });
 
 defineOgImage('Huppie', {
   title: 'Word chauffeur in zorgvervoer',
-  description: 'Meld u aan als chauffeur bij Huppie Taxi en rijd zorgvervoer met aandacht voor cliënten en duidelijke planning.',
+  description:
+    'Meld u aan als chauffeur bij Huppie Taxi en rijd zorgvervoer met aandacht voor cliënten en duidelijke planning.',
 });
 </script>

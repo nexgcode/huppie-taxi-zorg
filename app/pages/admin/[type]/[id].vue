@@ -211,7 +211,8 @@ import { adminForms, type AdminFormTable, useFormsStore } from '~/stores/forms';
 
 definePageMeta({ layout: 'admin', middleware: 'admin' });
 
-type DriverDocument = Database['public']['Tables']['driver_application_documents']['Row'];
+type DriverDocument
+  = Database['public']['Tables']['driver_application_documents']['Row'];
 
 const route = useRoute();
 const supabase = useSupabaseClient<Database>();
@@ -231,9 +232,24 @@ const documentsLoading = ref(false);
 const documentsError = ref('');
 const downloadingDocumentId = ref<string | null>(null);
 
-const title = computed(() => table.value ? adminForms[table.value] : 'Inzending');
-const fields = computed(() => Object.entries(submission.value || {}).filter(([key]) => !['id', 'status', 'created_at', 'telegram_notified_at', 'telegram_notification_error'].includes(key)));
-const regularFieldCount = computed(() => fields.value.filter(([key]) => key !== 'message').length);
+const title = computed(() =>
+  table.value ? adminForms[table.value] : 'Inzending',
+);
+const fields = computed(() =>
+  Object.entries(submission.value || {}).filter(
+    ([key]) =>
+      ![
+        'id',
+        'status',
+        'created_at',
+        'telegram_notified_at',
+        'telegram_notification_error',
+      ].includes(key),
+  ),
+);
+const regularFieldCount = computed(
+  () => fields.value.filter(([key]) => key !== 'message').length,
+);
 
 function formatField(key: string) {
   const labels: Record<string, string> = {
@@ -258,19 +274,38 @@ function formatField(key: string) {
     terms_accepted_at: 'Voorwaarden geaccepteerd op',
   };
   if (labels[key]) return labels[key];
-  return key.replaceAll('_', ' ').replace(/\b\w/g, (character) => character.toUpperCase());
+  return key
+    .replaceAll('_', ' ')
+    .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
 function formatValue(key: string, value: unknown) {
   if (typeof value === 'boolean') return value ? 'Ja' : 'Nee';
   if (value === null || value === '') return '—';
   if (key === 'appointment_time') return String(value).slice(0, 5);
-  if (key.includes('date') || key === 'created_at' || key === 'terms_accepted_at') return new Intl.DateTimeFormat('nl-NL', { dateStyle: 'long', timeStyle: key === 'terms_accepted_at' ? 'medium' : key === 'created_at' ? 'short' : undefined }).format(new Date(String(value)));
+  if (
+    key.includes('date')
+    || key === 'created_at'
+    || key === 'terms_accepted_at'
+  )
+    return new Intl.DateTimeFormat('nl-NL', {
+      dateStyle: 'long',
+      timeStyle:
+        key === 'terms_accepted_at'
+          ? 'medium'
+          : key === 'created_at'
+            ? 'short'
+            : undefined,
+    }).format(new Date(String(value)));
   return String(value);
 }
 
 function documentLabel(type: string) {
-  return type === 'driver_license' ? 'Rijbewijs' : type === 'driver_card' ? 'Chauffeurskaart' : type;
+  return type === 'driver_license'
+    ? 'Rijbewijs'
+    : type === 'driver_card'
+      ? 'Chauffeurskaart'
+      : type;
 }
 
 function isImageDocument(driverDocument: DriverDocument) {
@@ -282,7 +317,11 @@ function isPdfDocument(driverDocument: DriverDocument) {
 }
 
 async function loadDocuments() {
-  if (table.value !== 'driver_applications' || typeof route.params.id !== 'string') return;
+  if (
+    table.value !== 'driver_applications'
+    || typeof route.params.id !== 'string'
+  )
+    return;
   documentsLoading.value = true;
   documentsError.value = '';
   const { data, error: requestError } = await supabase
@@ -302,16 +341,28 @@ async function loadDocuments() {
   }
   const { data: signedUrls, error: signedUrlsError } = await supabase.storage
     .from('driver-application-documents')
-    .createSignedUrls(data.map((driverDocument) => driverDocument.object_path), 60 * 60);
-  if (signedUrlsError) documentsError.value = 'De documenten konden niet worden geopend. Probeer het opnieuw.';
-  else documentUrls.value = Object.fromEntries(signedUrls.filter((item) => item.signedUrl).map((item) => [item.path, item.signedUrl]));
+    .createSignedUrls(
+      data.map((driverDocument) => driverDocument.object_path),
+      60 * 60,
+    );
+  if (signedUrlsError) {
+    documentsError.value = 'De documenten konden niet worden geopend. Probeer het opnieuw.';
+  } else if (signedUrls) {
+    documentUrls.value = Object.fromEntries(
+      signedUrls
+        .filter((item) => item.signedUrl)
+        .map((item) => [item.path, item.signedUrl]),
+    );
+  }
   documentsLoading.value = false;
 }
 
 async function downloadDocument(driverDocument: DriverDocument) {
   downloadingDocumentId.value = driverDocument.id;
   documentsError.value = '';
-  const { data, error: downloadError } = await supabase.storage.from('driver-application-documents').download(driverDocument.object_path);
+  const { data, error: downloadError } = await supabase.storage
+    .from('driver-application-documents')
+    .download(driverDocument.object_path);
   downloadingDocumentId.value = null;
   if (downloadError || !data) {
     documentsError.value = 'Het document kon niet worden gedownload. Probeer het opnieuw.';
@@ -332,7 +383,9 @@ async function loadSubmission() {
     return;
   }
 
-  const cachedSubmission = forms.cache[table.value].find((item) => item.id === route.params.id);
+  const cachedSubmission = forms.cache[table.value].find(
+    (item) => item.id === route.params.id,
+  );
   if (cachedSubmission) {
     submission.value = cachedSubmission;
     loading.value = false;
@@ -340,8 +393,13 @@ async function loadSubmission() {
   }
 
   try {
-    const { data, error: requestError } = await supabase.from(table.value).select('*').eq('id', route.params.id).single();
-    if (requestError || !data) error.value = 'Deze inzending kon niet worden geladen. Probeer het opnieuw.';
+    const { data, error: requestError } = await supabase
+      .from(table.value)
+      .select('*')
+      .eq('id', route.params.id)
+      .single();
+    if (requestError || !data)
+      error.value = 'Deze inzending kon niet worden geladen. Probeer het opnieuw.';
     else submission.value = data as Record<string, unknown>;
   } catch {
     error.value = 'Deze inzending kon niet worden geladen. Probeer het opnieuw.';
@@ -358,7 +416,12 @@ async function markHandled() {
   if (!table.value || typeof route.params.id !== 'string') return;
   updating.value = true;
   error.value = '';
-  const { data, error: updateError } = await supabase.from(table.value).update({ status: 'handled' }).eq('id', route.params.id).select('status').single();
+  const { data, error: updateError } = await supabase
+    .from(table.value)
+    .update({ status: 'handled' })
+    .eq('id', route.params.id)
+    .select('status')
+    .single();
   updating.value = false;
   if (updateError || !data) {
     error.value = 'De inzending kon niet worden bijgewerkt. Probeer het opnieuw.';
@@ -366,7 +429,9 @@ async function markHandled() {
   }
   if (submission.value) submission.value.status = 'handled';
   if (table.value) {
-    const cachedSubmission = forms.cache[table.value].find((item) => item.id === route.params.id);
+    const cachedSubmission = forms.cache[table.value].find(
+      (item) => item.id === route.params.id,
+    );
     if (cachedSubmission) cachedSubmission.status = 'handled';
   }
 }

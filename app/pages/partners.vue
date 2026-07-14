@@ -186,15 +186,33 @@ import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 import { z } from 'zod';
 
 const benefits = [
-  { icon: 'i-lucide-calendar-clock', title: 'Slim gepland vervoer', text: 'Ons systeem verdeelt zorgritten automatisch over beschikbare chauffeurs, zodat de planning overzichtelijk blijft.' },
-  { icon: 'i-lucide-route', title: 'Duidelijk overzicht', text: 'We stemmen ritten af op afspraakmomenten en houden de praktische details voor uw organisatie helder.' },
-  { icon: 'i-lucide-message-square-heart', title: 'Feedback van cliënten', text: 'Met ons feedbacksysteem verzamelen we ervaringen van cliënten en gebruiken we die om de dienstverlening te verbeteren.' },
-  { icon: 'i-lucide-handshake', title: 'Een betrokken partner', text: 'U heeft één duidelijke contactroute voor vragen over geplande zorgvervoerbehoeften.' },
+  {
+    icon: 'i-lucide-calendar-clock',
+    title: 'Slim gepland vervoer',
+    text: 'Ons systeem verdeelt zorgritten automatisch over beschikbare chauffeurs, zodat de planning overzichtelijk blijft.',
+  },
+  {
+    icon: 'i-lucide-route',
+    title: 'Duidelijk overzicht',
+    text: 'We stemmen ritten af op afspraakmomenten en houden de praktische details voor uw organisatie helder.',
+  },
+  {
+    icon: 'i-lucide-message-square-heart',
+    title: 'Feedback van cliënten',
+    text: 'Met ons feedbacksysteem verzamelen we ervaringen van cliënten en gebruiken we die om de dienstverlening te verbeteren.',
+  },
+  {
+    icon: 'i-lucide-handshake',
+    title: 'Een betrokken partner',
+    text: 'U heeft één duidelijke contactroute voor vragen over geplande zorgvervoerbehoeften.',
+  },
 ];
 
 const timeOptions = Array.from({ length: 37 }, (_, index) => {
   const minutes = 9 * 60 + index * 15;
-  return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+  const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
+  const minutesInHour = String(minutes % 60).padStart(2, '0');
+  return `${hours}:${minutesInHour}`;
 });
 
 const minAppointmentDate = today(getLocalTimeZone());
@@ -206,9 +224,17 @@ const schema = z.object({
     .refine((value) => value instanceof CalendarDate, 'Kies een afspraakdatum.')
     .refine((value) => {
       if (!(value instanceof CalendarDate)) return false;
-      return value.compare(minAppointmentDate) >= 0 && value.compare(maxAppointmentDate) <= 0;
+      return (
+        value.compare(minAppointmentDate) >= 0
+        && value.compare(maxAppointmentDate) <= 0
+      );
     }, 'Kies een datum binnen het komende jaar.'),
-  time: z.string().refine((time) => timeOptions.includes(time), 'Kies een tijd tussen 09:00 en 18:00.'),
+  time: z
+    .string()
+    .refine(
+      (time) => timeOptions.includes(time),
+      'Kies een tijd tussen 09:00 en 18:00.',
+    ),
 });
 
 const submitted = ref(false);
@@ -221,7 +247,11 @@ const form = reactive({
 const forms = useForms();
 
 async function submit() {
-  await forms.submitPartner({ email: form.email, appointment_date: appointmentDate.value?.toString() || '', appointment_time: form.time });
+  await forms.submitPartner({
+    email: form.email,
+    appointment_date: appointmentDate.value?.toString() || '',
+    appointment_time: form.time,
+  });
   submitted.value = true;
 }
 

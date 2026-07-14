@@ -8,7 +8,11 @@ export const adminForms = {
 } as const;
 
 export type AdminFormTable = keyof typeof adminForms;
-export type AdminSubmission = Record<string, unknown> & { id: string; created_at: string; status: string };
+export type AdminSubmission = Record<string, unknown> & {
+  id: string;
+  created_at: string;
+  status: string;
+};
 
 const tables = Object.keys(adminForms) as AdminFormTable[];
 
@@ -28,8 +32,12 @@ export const useFormsStore = defineStore('forms', () => {
       title: adminForms[table],
       table,
       items: [...cache.value[table]].sort((a, b) => {
-        const statusOrder = Number(a.status !== 'new') - Number(b.status !== 'new');
-        return statusOrder || new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        const statusOrder
+          = Number(a.status !== 'new') - Number(b.status !== 'new');
+        return (
+          statusOrder
+          || new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
       }),
     }));
   });
@@ -44,12 +52,18 @@ export const useFormsStore = defineStore('forms', () => {
     error.value = null;
     const supabase = useSupabaseClient<Database>();
     try {
-      const results = await Promise.all(tables.map(async (table) => {
-        const { data, error: requestError } = await supabase.from(table).select('*').order('created_at', { ascending: false });
-        if (requestError) throw requestError;
-        return [table, data as unknown as AdminSubmission[]] as const;
-      }));
-      for (const [table, submissions] of results) cache.value[table] = submissions;
+      const results = await Promise.all(
+        tables.map(async (table) => {
+          const { data, error: requestError } = await supabase
+            .from(table)
+            .select('*')
+            .order('created_at', { ascending: false });
+          if (requestError) throw requestError;
+          return [table, data as unknown as AdminSubmission[]] as const;
+        }),
+      );
+      for (const [table, submissions] of results)
+        cache.value[table] = submissions;
       loaded.value = true;
     } catch {
       error.value = 'De inzendingen konden niet worden geladen. Probeer de pagina opnieuw te laden.';

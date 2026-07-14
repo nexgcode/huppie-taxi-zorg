@@ -29,8 +29,13 @@ export function useForms() {
     }
   }
 
-  function submitForm<T extends Exclude<FormType, 'driver'>>(type: T, payload: FormPayloads[T]) {
-    return submit(() => $fetch('/api/forms', { method: 'POST', body: { type, payload } }));
+  function submitForm<T extends Exclude<FormType, 'driver'>>(
+    type: T,
+    payload: FormPayloads[T],
+  ) {
+    return submit(() =>
+      $fetch('/api/forms', { method: 'POST', body: { type, payload } }),
+    );
   }
 
   function submitContact(payload: FormPayloads['contact']) {
@@ -45,15 +50,26 @@ export function useForms() {
     return submitForm('partner', payload);
   }
 
-  function submitDriver(payload: FormPayloads['driver'], documents: DriverDocument[]) {
+  function submitDriver(
+    payload: FormPayloads['driver'],
+    documents: DriverDocument[],
+  ) {
     return submit(async () => {
       const body = new FormData();
       body.set('type', 'driver');
       body.set('payload', JSON.stringify(payload));
-      for (const document of documents) body.append(document.type, document.file);
+      for (const document of documents)
+        body.append(document.type, document.file);
       return await $fetch('/api/forms', { method: 'POST', body });
     });
   }
 
-  return reactive({ submitting, error, submitContact, submitRide, submitPartner, submitDriver });
+  return reactive({
+    submitting,
+    error,
+    submitContact,
+    submitRide,
+    submitPartner,
+    submitDriver,
+  });
 }

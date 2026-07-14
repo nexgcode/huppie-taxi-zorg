@@ -74,7 +74,10 @@ watchEffect(() => {
 async function login() {
   loading.value = true;
   error.value = '';
-  const { error: loginError } = await supabase.auth.signInWithPassword({ email: email.value, password: password.value });
+  const { error: loginError } = await supabase.auth.signInWithPassword({
+    email: email.value,
+    password: password.value,
+  });
   loading.value = false;
   if (loginError) error.value = loginError.message;
 }

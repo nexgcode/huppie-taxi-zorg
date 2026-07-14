@@ -327,9 +327,27 @@ const form = reactive({
 });
 
 const insurers = [
-  'CZ', 'DSW', 'Menzis', 'VGZ', 'Zilveren Kruis', 'a.s.r.', 'Anderzorg', 'Bewuzt',
-  'CZdirect', 'De Friesland', 'FBTO', 'HollandZorg', 'IZA', 'IZZ', 'Just',
-  'Nationale-Nederlanden', 'OHRA', 'ONVZ', 'Salland', 'Univé', 'UnitedConsumers',
+  'CZ',
+  'DSW',
+  'Menzis',
+  'VGZ',
+  'Zilveren Kruis',
+  'a.s.r.',
+  'Anderzorg',
+  'Bewuzt',
+  'CZdirect',
+  'De Friesland',
+  'FBTO',
+  'HollandZorg',
+  'IZA',
+  'IZZ',
+  'Just',
+  'Nationale-Nederlanden',
+  'OHRA',
+  'ONVZ',
+  'Salland',
+  'Univé',
+  'UnitedConsumers',
   'VvAA', 'Zorg en Zekerheid', 'Anders',
 ];
 
@@ -342,10 +360,16 @@ const personalSchema = z.object({
   firstName: z.string().trim().min(1, 'Vul uw voornaam in.'),
   lastName: z.string().trim().min(1, 'Vul uw achternaam in.'),
   birthDate: z.unknown()
-    .refine((value) => value instanceof CalendarDate, 'Vul uw geboortedatum in.')
+    .refine(
+      (value) => value instanceof CalendarDate,
+      'Vul uw geboortedatum in.',
+    )
     .refine((value) => {
       if (!(value instanceof CalendarDate)) return false;
-      return value.compare(minBirthDate) >= 0 && value.compare(maxBirthDate) <= 0;
+      return (
+        value.compare(minBirthDate) >= 0
+        && value.compare(maxBirthDate) <= 0
+      );
     }, 'Vul een geldige geboortedatum in.'),
   email: z.string().trim().email('Vul een geldig e-mailadres in.'),
   phone: z.string().trim().min(1, 'Vul uw telefoonnummer in.'),
@@ -357,7 +381,11 @@ const insuranceSchema = z.object({
   authorisationNumber: z.string().trim(),
   contactConsent: z.boolean(),
 }).superRefine((value, ctx) => {
-  if (value.hasTransportAuthorisation === 'yes' && !value.contactConsent && !value.authorisationNumber) {
+  if (
+    value.hasTransportAuthorisation === 'yes'
+    && !value.contactConsent
+    && !value.authorisationNumber
+  ) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ['authorisationNumber'],
@@ -368,19 +396,27 @@ const insuranceSchema = z.object({
 
 usePageSeo({
   title: 'Zorgvervoer aanvragen',
-  description: 'Vraag zorgvervoer aan bij Huppie Taxi. Uw aanvraag wordt zorgvuldig behandeld.',
+  description:
+    'Vraag zorgvervoer aan bij Huppie Taxi. Uw aanvraag wordt zorgvuldig behandeld.',
   path: '/rit-aanvragen',
   noindex: true,
 });
 
 defineOgImage('Huppie', {
   title: 'Zorgvervoer aanvragen',
-  description: 'Vraag zorgvervoer aan bij Huppie Taxi. Uw aanvraag wordt zorgvuldig behandeld.',
+  description:
+    'Vraag zorgvervoer aan bij Huppie Taxi. Uw aanvraag wordt zorgvuldig behandeld.',
 });
 
-const schema = computed(() => step.value === 1 ? personalSchema : insuranceSchema);
-const isStepOneComplete = computed(() => personalSchema.safeParse(form).success);
-const hasAuthorisationSelectionError = computed(() => insuranceSubmitAttempted.value && !form.hasTransportAuthorisation);
+const schema = computed(() =>
+  step.value === 1 ? personalSchema : insuranceSchema,
+);
+const isStepOneComplete = computed(
+  () => personalSchema.safeParse(form).success,
+);
+const hasAuthorisationSelectionError = computed(
+  () => insuranceSubmitAttempted.value && !form.hasTransportAuthorisation,
+);
 
 watch(() => form.contactConsent, (wantsHelp) => {
   if (wantsHelp) form.authorisationNumber = '';
@@ -405,7 +441,10 @@ async function submitRequest() {
     phone: form.phone,
     insurer: form.insurer,
     has_transport_authorisation: form.hasTransportAuthorisation === 'yes',
-    authorisation_number: form.hasTransportAuthorisation === 'yes' ? form.authorisationNumber : null,
+    authorisation_number:
+      form.hasTransportAuthorisation === 'yes'
+        ? form.authorisationNumber
+        : null,
     contact_consent: form.contactConsent,
   });
   submitted.value = true;

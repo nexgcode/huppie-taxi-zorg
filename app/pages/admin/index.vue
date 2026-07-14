@@ -121,8 +121,20 @@ definePageMeta({ layout: 'admin', middleware: 'admin' });
 
 const forms = useFormsStore();
 const { error, loading, sections } = storeToRefs(forms);
-const totalNew = computed(() => sections.value.reduce((total, section) => total + section.items.filter((item) => item.status === 'new').length, 0));
-const totalHandled = computed(() => sections.value.reduce((total, section) => total + section.items.filter((item) => item.status !== 'new').length, 0));
+const totalNew = computed(() =>
+  sections.value.reduce(
+    (total, section) =>
+      total + section.items.filter((item) => item.status === 'new').length,
+    0,
+  ),
+);
+const totalHandled = computed(() =>
+  sections.value.reduce(
+    (total, section) =>
+      total + section.items.filter((item) => item.status !== 'new').length,
+    0,
+  ),
+);
 
 onMounted(forms.loadAll);
 </script>

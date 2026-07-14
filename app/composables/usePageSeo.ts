@@ -7,7 +7,12 @@ type PageSeoOptions = {
   noindex?: boolean;
 };
 
-export function usePageSeo({ title, description, path, noindex = false }: PageSeoOptions) {
+export function usePageSeo({
+  title,
+  description,
+  path,
+  noindex = false,
+}: PageSeoOptions) {
   const canonicalUrl = `${siteUrl}${path}`;
 
   useSeoMeta({
