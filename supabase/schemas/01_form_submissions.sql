@@ -92,42 +92,42 @@ grant select on table public.partner_requests to authenticated;
 grant select on table public.driver_applications to authenticated;
 grant select on table public.driver_application_documents to authenticated;
 
-create policy "Admins can read form submissions"
+create policy "Authenticated users can read contact submissions"
 on public.contact_submissions for select to authenticated
-using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+using (true);
 
-create policy "Admins can read ride requests"
+create policy "Authenticated users can read ride requests"
 on public.ride_requests for select to authenticated
-using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+using (true);
 
-create policy "Admins can read partner requests"
+create policy "Authenticated users can read partner requests"
 on public.partner_requests for select to authenticated
-using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+using (true);
 
-create policy "Admins can read driver applications"
+create policy "Authenticated users can read driver applications"
 on public.driver_applications for select to authenticated
-using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+using (true);
 
-create policy "Admins can read driver documents"
+create policy "Authenticated users can read driver documents"
 on public.driver_application_documents for select to authenticated
-using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+using (true);
 
-create policy "Admins can update contact submissions"
+create policy "Authenticated users can update contact submissions"
 on public.contact_submissions for update to authenticated
-using ((select auth.jwt() ->> 'email') like '%@huppietaxi.nl')
-with check ((select auth.jwt() ->> 'email') like '%@huppietaxi.nl');
+using (true)
+with check (true);
 
-create policy "Admins can update ride requests"
+create policy "Authenticated users can update ride requests"
 on public.ride_requests for update to authenticated
-using ((select auth.jwt() ->> 'email') like '%@huppietaxi.nl')
-with check ((select auth.jwt() ->> 'email') like '%@huppietaxi.nl');
+using (true)
+with check (true);
 
-create policy "Admins can update partner requests"
+create policy "Authenticated users can update partner requests"
 on public.partner_requests for update to authenticated
-using ((select auth.jwt() ->> 'email') like '%@huppietaxi.nl')
-with check ((select auth.jwt() ->> 'email') like '%@huppietaxi.nl');
+using (true)
+with check (true);
 
-create policy "Admins can update driver applications"
+create policy "Authenticated users can update driver applications"
 on public.driver_applications for update to authenticated
-using ((select auth.jwt() ->> 'email') like '%@huppietaxi.nl')
-with check ((select auth.jwt() ->> 'email') like '%@huppietaxi.nl');
+using (true)
+with check (true);

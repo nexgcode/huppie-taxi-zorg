@@ -24,7 +24,14 @@ export const useFormsStore = defineStore('forms', () => {
   const error = ref<string | null>(null)
 
   const sections = computed(() => {
-    return tables.map(table => ({ title: adminForms[table], table, items: cache.value[table] }))
+    return tables.map(table => ({
+      title: adminForms[table],
+      table,
+      items: [...cache.value[table]].sort((a, b) => {
+        const statusOrder = Number(a.status !== 'new') - Number(b.status !== 'new')
+        return statusOrder || new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      })
+    }))
   })
 
   async function loadAll() {

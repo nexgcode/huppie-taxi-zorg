@@ -3,6 +3,8 @@ definePageMeta({ layout: 'admin', middleware: 'admin' })
 
 const forms = useFormsStore()
 const { error, loading, sections } = storeToRefs(forms)
+const totalNew = computed(() => sections.value.reduce((total, section) => total + section.items.filter(item => item.status === 'new').length, 0))
+const totalHandled = computed(() => sections.value.reduce((total, section) => total + section.items.filter(item => item.status !== 'new').length, 0))
 
 onMounted(forms.loadAll)
 </script>
@@ -14,11 +16,26 @@ onMounted(forms.loadAll)
         Overzicht
       </p>
       <h1 class="display-heading mt-3 text-4xl text-navy-900 sm:text-5xl">
-        Admin inbox
+        Beheerdersinbox
       </h1>
       <p class="mt-3 leading-7 text-navy-700">
         Bekijk nieuwe aanvragen en werk ze af zodra ze zijn behandeld.
       </p>
+      <div
+        v-if="!loading && !error"
+        class="mt-5 flex flex-wrap gap-2"
+      >
+        <UBadge size="lg">
+          Nieuw {{ totalNew }}
+        </UBadge>
+        <UBadge
+          size="lg"
+          color="secondary"
+          variant="subtle"
+        >
+          Afgehandeld {{ totalHandled }}
+        </UBadge>
+      </div>
     </header>
 
     <div
@@ -88,7 +105,16 @@ onMounted(forms.loadAll)
             >
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <span class="font-bold text-navy-900">Bekijk inzending</span>
-                <UBadge>{{ item.status === 'new' ? 'Nieuw' : 'Afgehandeld' }}</UBadge>
+                <UBadge v-if="item.status === 'new'">
+                  Nieuw
+                </UBadge>
+                <UBadge
+                  v-else
+                  color="secondary"
+                  variant="subtle"
+                >
+                  Afgehandeld
+                </UBadge>
               </div>
               <p class="mt-2 text-sm leading-6 text-navy-700">
                 {{ new Intl.DateTimeFormat('nl-NL', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(item.created_at)) }}

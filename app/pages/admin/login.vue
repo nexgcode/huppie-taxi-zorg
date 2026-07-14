@@ -28,7 +28,7 @@ async function login() {
         Alleen voor medewerkers
       </p>
       <h1 class="display-heading mt-3 text-4xl text-navy-900">
-        Admin inbox
+        Beheerdersinbox
       </h1>
       <form
         class="mt-7"
