@@ -28,9 +28,10 @@
     "zod": "3.24.2"
   },
   "devDependencies": {
-    "@nuxt/eslint": "^1.16.0",
+    "@nuxt/eslint-config": "^1.16.0",
     "@nuxtjs/supabase": "^2.0.9",
     "eslint": "^10.6.0",
+    "eslint-plugin-vue": "^10.9.2",
     "typescript": "^6.0.3",
     "vue-tsc": "^3.3.5"
   },

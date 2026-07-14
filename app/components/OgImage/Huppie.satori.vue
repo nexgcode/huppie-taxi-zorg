@@ -1,13 +1,3 @@
-<script setup lang="ts">
-withDefaults(defineProps<{
-  title?: string
-  description?: string
-}>(), {
-  title: 'Betrouwbaar zorgvervoer',
-  description: 'Comfortabel en persoonlijk vervoer naar uw medische afspraak.'
-})
-</script>
-
 <template>
   <div class="og-card">
     <div class="og-content">
@@ -43,6 +33,16 @@ withDefaults(defineProps<{
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+withDefaults(defineProps<{
+  title?: string;
+  description?: string;
+}>(), {
+  title: 'Betrouwbaar zorgvervoer',
+  description: 'Comfortabel en persoonlijk vervoer naar uw medische afspraak.',
+});
+</script>
 
 <style>
 .og-card {

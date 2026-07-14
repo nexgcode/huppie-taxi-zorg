@@ -1,68 +1,3 @@
-<script setup lang="ts">
-import { z } from 'zod'
-
-const isFile = (value: unknown) => typeof File !== 'undefined' && value instanceof File
-
-const schema = z.object({
-  name: z.string().trim().min(1, 'Vul uw volledige naam in.'),
-  company: z.string().trim().min(1, 'Vul uw bedrijfsnaam in.'),
-  phone: z.string().trim().min(1, 'Vul uw telefoonnummer in.'),
-  email: z.string().trim().email('Vul een geldig e-mailadres in.'),
-  kvkNumber: z.string().trim().min(1, 'Vul uw KVK-nummer in.'),
-  txCertificate: z.string().refine(value => value === 'Ja' || value === 'Nee', 'Kies of u een TX-keurmerk heeft.'),
-  licensePlate: z.string().trim().min(1, 'Vul uw kenteken in.'),
-  vehicle: z.string().trim().min(1, 'Vul merk en model in.'),
-  driverLicense: z.unknown().refine(isFile, 'Upload uw rijbewijs.'),
-  driverCard: z.unknown().refine(isFile, 'Upload uw chauffeurskaart.'),
-  termsAccepted: z.boolean().refine(value => value, 'U moet de voorwaarden accepteren.')
-})
-
-const submitted = ref(false)
-const forms = useForms()
-const form = reactive({
-  name: '',
-  company: '',
-  phone: '',
-  email: '',
-  kvkNumber: '',
-  txCertificate: '',
-  licensePlate: '',
-  vehicle: '',
-  driverLicense: null as File | null,
-  driverCard: null as File | null,
-  termsAccepted: false
-})
-
-async function submit() {
-  if (!form.driverLicense || !form.driverCard) return
-  await forms.submitDriver({
-    name: form.name,
-    company: form.company,
-    phone: form.phone,
-    email: form.email,
-    kvk_number: form.kvkNumber,
-    tx_certificate: form.txCertificate === 'Ja',
-    license_plate: form.licensePlate,
-    vehicle: form.vehicle
-  }, [
-    { type: 'driver_license', file: form.driverLicense },
-    { type: 'driver_card', file: form.driverCard }
-  ])
-  submitted.value = true
-}
-
-usePageSeo({
-  title: 'Word chauffeur in zorgvervoer',
-  description: 'Meld u aan als chauffeur bij Huppie Taxi en rijd zorgvervoer met aandacht voor cliënten en duidelijke planning.',
-  path: '/chauffeur-worden'
-})
-
-defineOgImage('Huppie', {
-  title: 'Word chauffeur in zorgvervoer',
-  description: 'Meld u aan als chauffeur bij Huppie Taxi en rijd zorgvervoer met aandacht voor cliënten en duidelijke planning.'
-})
-</script>
-
 <template>
   <main id="inhoud">
     <section class="bg-navy-900 py-16 text-white sm:py-20">
@@ -313,3 +248,68 @@ defineOgImage('Huppie', {
     </section>
   </main>
 </template>
+
+<script setup lang="ts">
+import { z } from 'zod';
+
+const isFile = (value: unknown) => typeof File !== 'undefined' && value instanceof File;
+
+const schema = z.object({
+  name: z.string().trim().min(1, 'Vul uw volledige naam in.'),
+  company: z.string().trim().min(1, 'Vul uw bedrijfsnaam in.'),
+  phone: z.string().trim().min(1, 'Vul uw telefoonnummer in.'),
+  email: z.string().trim().email('Vul een geldig e-mailadres in.'),
+  kvkNumber: z.string().trim().min(1, 'Vul uw KVK-nummer in.'),
+  txCertificate: z.string().refine((value) => value === 'Ja' || value === 'Nee', 'Kies of u een TX-keurmerk heeft.'),
+  licensePlate: z.string().trim().min(1, 'Vul uw kenteken in.'),
+  vehicle: z.string().trim().min(1, 'Vul merk en model in.'),
+  driverLicense: z.unknown().refine(isFile, 'Upload uw rijbewijs.'),
+  driverCard: z.unknown().refine(isFile, 'Upload uw chauffeurskaart.'),
+  termsAccepted: z.boolean().refine((value) => value, 'U moet de voorwaarden accepteren.'),
+});
+
+const submitted = ref(false);
+const forms = useForms();
+const form = reactive({
+  name: '',
+  company: '',
+  phone: '',
+  email: '',
+  kvkNumber: '',
+  txCertificate: '',
+  licensePlate: '',
+  vehicle: '',
+  driverLicense: null as File | null,
+  driverCard: null as File | null,
+  termsAccepted: false,
+});
+
+async function submit() {
+  if (!form.driverLicense || !form.driverCard) return;
+  await forms.submitDriver({
+    name: form.name,
+    company: form.company,
+    phone: form.phone,
+    email: form.email,
+    kvk_number: form.kvkNumber,
+    tx_certificate: form.txCertificate === 'Ja',
+    license_plate: form.licensePlate,
+    vehicle: form.vehicle,
+  }, [
+    { type: 'driver_license', file: form.driverLicense },
+    { type: 'driver_card', file: form.driverCard },
+  ]);
+  submitted.value = true;
+}
+
+usePageSeo({
+  title: 'Word chauffeur in zorgvervoer',
+  description: 'Meld u aan als chauffeur bij Huppie Taxi en rijd zorgvervoer met aandacht voor cliënten en duidelijke planning.',
+  path: '/chauffeur-worden',
+});
+
+defineOgImage('Huppie', {
+  title: 'Word chauffeur in zorgvervoer',
+  description: 'Meld u aan als chauffeur bij Huppie Taxi en rijd zorgvervoer met aandacht voor cliënten en duidelijke planning.',
+});
+</script>

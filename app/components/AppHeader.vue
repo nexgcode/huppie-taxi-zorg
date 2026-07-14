@@ -1,20 +1,9 @@
-<script setup lang="ts">
-const isMenuOpen = ref(false)
-
-const navigation = [
-  { label: 'Veelgestelde vragen', to: '/#vragen' },
-  { label: 'Voor zorgpartners', to: '/partners' },
-  { label: 'Word chauffeur', to: '/chauffeur-worden' },
-  { label: 'Contact', to: '/contact' }
-]
-</script>
-
 <template>
   <header class="border-b border-navy-900/10 bg-navy-50">
     <div class="section-wrap flex min-h-20 items-center justify-between gap-4">
       <NuxtLink
         to="/"
-        class="flex items-center gap-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-4"
+        class="flex items-center gap-3 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-4"
         aria-label="Huppie Taxi, startpagina"
       >
         <img
@@ -77,3 +66,14 @@ const navigation = [
     </nav>
   </header>
 </template>
+
+<script setup lang="ts">
+const isMenuOpen = ref(false);
+
+const navigation = [
+  { label: 'Veelgestelde vragen', to: '/#vragen' },
+  { label: 'Voor zorgpartners', to: '/partners' },
+  { label: 'Word chauffeur', to: '/chauffeur-worden' },
+  { label: 'Contact', to: '/contact' },
+];
+</script>

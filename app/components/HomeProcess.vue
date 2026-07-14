@@ -1,12 +1,3 @@
-<script setup lang="ts">
-const steps = [
-  { number: '01', title: 'Vertel ons over uw rit', text: 'Bel ons of stuur een kort verzoek met uw ophaaladres, bestemming en afspraaktijd.' },
-  { number: '02', title: 'Ontvang duidelijke bevestiging', text: 'Wij bevestigen de ritgegevens en stemmen de planning met u af.' },
-  { number: '03', title: 'Ophalen bij uw deur', text: 'Uw geplande rit begint bij u thuis, met ruimte om rustig te reizen.' },
-  { number: '04', title: 'Kom met vertrouwen aan', text: 'We brengen u naar uw zorgbestemming en kunnen ook de terugrit afspreken.' }
-]
-</script>
-
 <template>
   <section
     id="werkwijze"
@@ -38,3 +29,12 @@ const steps = [
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+const steps = [
+  { number: '01', title: 'Vertel ons over uw rit', text: 'Bel ons of stuur een kort verzoek met uw ophaaladres, bestemming en afspraaktijd.' },
+  { number: '02', title: 'Ontvang duidelijke bevestiging', text: 'Wij bevestigen de ritgegevens en stemmen de planning met u af.' },
+  { number: '03', title: 'Ophalen bij uw deur', text: 'Uw geplande rit begint bij u thuis, met ruimte om rustig te reizen.' },
+  { number: '04', title: 'Kom met vertrouwen aan', text: 'We brengen u naar uw zorgbestemming en kunnen ook de terugrit afspreken.' },
+];
+</script>

@@ -1,16 +1,3 @@
-<script setup lang="ts">
-usePageSeo({
-  title: 'Contact over zorgvervoer',
-  description: 'Neem contact op met Huppie Taxi over een aanvraag, geplande rit of vraag over zorgvervoer.',
-  path: '/contact'
-})
-
-defineOgImage('Huppie', {
-  title: 'Contact over zorgvervoer',
-  description: 'Neem contact op met Huppie Taxi over een aanvraag, geplande rit of vraag over zorgvervoer.'
-})
-</script>
-
 <template>
   <main id="inhoud">
     <section class="bg-navy-900 py-16 text-white sm:py-20">
@@ -44,3 +31,16 @@ defineOgImage('Huppie', {
     </section>
   </main>
 </template>
+
+<script setup lang="ts">
+usePageSeo({
+  title: 'Contact over zorgvervoer',
+  description: 'Neem contact op met Huppie Taxi over een aanvraag, geplande rit of vraag over zorgvervoer.',
+  path: '/contact',
+});
+
+defineOgImage('Huppie', {
+  title: 'Contact over zorgvervoer',
+  description: 'Neem contact op met Huppie Taxi over een aanvraag, geplande rit of vraag over zorgvervoer.',
+});
+</script>

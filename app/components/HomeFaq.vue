@@ -1,13 +1,3 @@
-<script setup lang="ts">
-const faqs = [
-  { label: 'Hoe ver van tevoren moet ik boeken?', content: 'Vooraf boeken helpt ons uw ophaalmoment goed rond uw afspraak te plannen. Neem contact op voor de actuele beschikbaarheid van uw rit.' },
-  { label: 'Kan ik ook een retourrit regelen?', content: 'Ja. Vertel ons bij uw aanvraag wanneer u ongeveer terug wilt reizen. Samen bespreken we wat passend is voor uw afspraakdag.' },
-  { label: 'Kan ik vervoer voor een familielid regelen?', content: 'Ja. Familieleden kunnen contact met ons opnemen en de gegevens doorgeven die nodig zijn om de rit te plannen.' },
-  { label: 'Regelen jullie ook terugkerend vervoer?', content: 'Ja. Heeft u regelmatige afspraken voor behandeling, therapie of revalidatie? Vraag ons naar de mogelijkheden voor een vaste planning.' },
-  { label: 'Hoe zit het met verzekering of vergoeding?', content: 'Dekking of vergoeding van vervoer kan afhangen van uw verzekeraar, zorgsituatie en toestemming. Neem contact op om de mogelijkheden te bespreken.' }
-]
-</script>
-
 <template>
   <section
     id="vragen"
@@ -34,3 +24,13 @@ const faqs = [
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+const faqs = [
+  { label: 'Hoe ver van tevoren moet ik boeken?', content: 'Vooraf boeken helpt ons uw ophaalmoment goed rond uw afspraak te plannen. Neem contact op voor de actuele beschikbaarheid van uw rit.' },
+  { label: 'Kan ik ook een retourrit regelen?', content: 'Ja. Vertel ons bij uw aanvraag wanneer u ongeveer terug wilt reizen. Samen bespreken we wat passend is voor uw afspraakdag.' },
+  { label: 'Kan ik vervoer voor een familielid regelen?', content: 'Ja. Familieleden kunnen contact met ons opnemen en de gegevens doorgeven die nodig zijn om de rit te plannen.' },
+  { label: 'Regelen jullie ook terugkerend vervoer?', content: 'Ja. Heeft u regelmatige afspraken voor behandeling, therapie of revalidatie? Vraag ons naar de mogelijkheden voor een vaste planning.' },
+  { label: 'Hoe zit het met verzekering of vergoeding?', content: 'Dekking of vergoeding van vervoer kan afhangen van uw verzekeraar, zorgsituatie en toestemming. Neem contact op om de mogelijkheden te bespreken.' },
+];
+</script>

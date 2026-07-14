@@ -1,14 +1,3 @@
-<script setup lang="ts">
-definePageMeta({ layout: 'admin', middleware: 'admin' })
-
-const forms = useFormsStore()
-const { error, loading, sections } = storeToRefs(forms)
-const totalNew = computed(() => sections.value.reduce((total, section) => total + section.items.filter(item => item.status === 'new').length, 0))
-const totalHandled = computed(() => sections.value.reduce((total, section) => total + section.items.filter(item => item.status !== 'new').length, 0))
-
-onMounted(forms.loadAll)
-</script>
-
 <template>
   <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
     <header class="max-w-2xl">
@@ -126,3 +115,14 @@ onMounted(forms.loadAll)
     </div>
   </main>
 </template>
+
+<script setup lang="ts">
+definePageMeta({ layout: 'admin', middleware: 'admin' });
+
+const forms = useFormsStore();
+const { error, loading, sections } = storeToRefs(forms);
+const totalNew = computed(() => sections.value.reduce((total, section) => total + section.items.filter((item) => item.status === 'new').length, 0));
+const totalHandled = computed(() => sections.value.reduce((total, section) => total + section.items.filter((item) => item.status !== 'new').length, 0));
+
+onMounted(forms.loadAll);
+</script>

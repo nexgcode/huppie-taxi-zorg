@@ -1,26 +1,3 @@
-<script setup lang="ts">
-definePageMeta({ layout: 'admin' })
-
-const supabase = useSupabaseClient()
-const user = useSupabaseUser()
-const email = ref('')
-const password = ref('')
-const loading = ref(false)
-const error = ref('')
-
-watchEffect(() => {
-  if (user.value) navigateTo('/admin')
-})
-
-async function login() {
-  loading.value = true
-  error.value = ''
-  const { error: loginError } = await supabase.auth.signInWithPassword({ email: email.value, password: password.value })
-  loading.value = false
-  if (loginError) error.value = loginError.message
-}
-</script>
-
 <template>
   <main class="mx-auto max-w-md px-4 py-16 sm:px-6">
     <section class="rounded-2xl border border-navy-900/10 bg-white p-7 shadow-sm sm:p-10">
@@ -79,3 +56,26 @@ async function login() {
     </section>
   </main>
 </template>
+
+<script setup lang="ts">
+definePageMeta({ layout: 'admin' });
+
+const supabase = useSupabaseClient();
+const user = useSupabaseUser();
+const email = ref('');
+const password = ref('');
+const loading = ref(false);
+const error = ref('');
+
+watchEffect(() => {
+  if (user.value) navigateTo('/admin');
+});
+
+async function login() {
+  loading.value = true;
+  error.value = '';
+  const { error: loginError } = await supabase.auth.signInWithPassword({ email: email.value, password: password.value });
+  loading.value = false;
+  if (loginError) error.value = loginError.message;
+}
+</script>

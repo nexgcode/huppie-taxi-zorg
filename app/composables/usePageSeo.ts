@@ -1,14 +1,14 @@
-const siteUrl = 'https://zorg.huppietaxi.nl/'
+const siteUrl = 'https://zorg.huppietaxi.nl/';
 
 type PageSeoOptions = {
-  title: string
-  description: string
-  path: string
-  noindex?: boolean
-}
+  title: string;
+  description: string;
+  path: string;
+  noindex?: boolean;
+};
 
 export function usePageSeo({ title, description, path, noindex = false }: PageSeoOptions) {
-  const canonicalUrl = `${siteUrl}${path}`
+  const canonicalUrl = `${siteUrl}${path}`;
 
   useSeoMeta({
     title,
@@ -18,25 +18,25 @@ export function usePageSeo({ title, description, path, noindex = false }: PageSe
     ogUrl: canonicalUrl,
     twitterTitle: title,
     twitterDescription: description,
-    robots: noindex ? 'noindex, nofollow' : 'index, follow'
-  })
+    robots: noindex ? 'noindex, nofollow' : 'index, follow',
+  });
 
   useHead({
-    link: [{ rel: 'canonical', href: canonicalUrl }]
-  })
+    link: [{ rel: 'canonical', href: canonicalUrl }],
+  });
 
   useSchemaOrg([
     defineWebPage({
       name: title,
       description,
       url: canonicalUrl,
-      inLanguage: 'nl-NL'
+      inLanguage: 'nl-NL',
     }),
     defineBreadcrumb({
       itemListElement: [
         { name: 'Home', item: siteUrl },
-        { name: title, item: canonicalUrl }
-      ]
-    })
-  ])
+        { name: title, item: canonicalUrl },
+      ],
+    }),
+  ]);
 }

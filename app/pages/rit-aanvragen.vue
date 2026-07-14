@@ -1,113 +1,3 @@
-<script setup lang="ts">
-import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date'
-import { z } from 'zod'
-
-const step = ref(1)
-const submitted = ref(false)
-const forms = useForms()
-const insuranceSubmitAttempted = ref(false)
-const birthDate = shallowRef<CalendarDate | null>(null)
-const todayDate = today(getLocalTimeZone())
-const minBirthDate = todayDate.subtract({ years: 120 })
-const maxBirthDate = todayDate
-const form = reactive({
-  firstName: '',
-  lastName: '',
-  birthDate: null as unknown,
-  email: '',
-  phone: '',
-  insurer: '',
-  hasTransportAuthorisation: '',
-  authorisationNumber: '',
-  contactConsent: false
-})
-
-const insurers = [
-  'CZ', 'DSW', 'Menzis', 'VGZ', 'Zilveren Kruis', 'a.s.r.', 'Anderzorg', 'Bewuzt',
-  'CZdirect', 'De Friesland', 'FBTO', 'HollandZorg', 'IZA', 'IZZ', 'Just',
-  'Nationale-Nederlanden', 'OHRA', 'ONVZ', 'Salland', 'Univé', 'UnitedConsumers',
-  'VvAA', 'Zorg en Zekerheid', 'Anders'
-]
-
-const transportAuthorisationOptions = [
-  { label: 'Ja, ik heb al toestemming', value: 'yes' },
-  { label: 'Nee, of ik weet het niet', value: 'no' }
-]
-
-const personalSchema = z.object({
-  firstName: z.string().trim().min(1, 'Vul uw voornaam in.'),
-  lastName: z.string().trim().min(1, 'Vul uw achternaam in.'),
-  birthDate: z.unknown()
-    .refine(value => value instanceof CalendarDate, 'Vul uw geboortedatum in.')
-    .refine((value) => {
-      if (!(value instanceof CalendarDate)) return false
-      return value.compare(minBirthDate) >= 0 && value.compare(maxBirthDate) <= 0
-    }, 'Vul een geldige geboortedatum in.'),
-  email: z.string().trim().email('Vul een geldig e-mailadres in.'),
-  phone: z.string().trim().min(1, 'Vul uw telefoonnummer in.')
-})
-
-const insuranceSchema = z.object({
-  insurer: z.string().min(1, 'Kies uw zorgverzekeraar.'),
-  hasTransportAuthorisation: z.string().optional(),
-  authorisationNumber: z.string().trim(),
-  contactConsent: z.boolean()
-}).superRefine((value, ctx) => {
-  if (value.hasTransportAuthorisation === 'yes' && !value.contactConsent && !value.authorisationNumber) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ['authorisationNumber'],
-      message: 'Vul uw machtigingsnummer in.'
-    })
-  }
-})
-
-usePageSeo({
-  title: 'Zorgvervoer aanvragen',
-  description: 'Vraag zorgvervoer aan bij Huppie Taxi. Uw aanvraag wordt zorgvuldig behandeld.',
-  path: '/rit-aanvragen',
-  noindex: true
-})
-
-defineOgImage('Huppie', {
-  title: 'Zorgvervoer aanvragen',
-  description: 'Vraag zorgvervoer aan bij Huppie Taxi. Uw aanvraag wordt zorgvuldig behandeld.'
-})
-
-const schema = computed(() => step.value === 1 ? personalSchema : insuranceSchema)
-const isStepOneComplete = computed(() => personalSchema.safeParse(form).success)
-const hasAuthorisationSelectionError = computed(() => insuranceSubmitAttempted.value && !form.hasTransportAuthorisation)
-
-watch(() => form.contactConsent, (wantsHelp) => {
-  if (wantsHelp) form.authorisationNumber = ''
-})
-
-watch(() => form.hasTransportAuthorisation, (hasAuthorisation) => {
-  if (hasAuthorisation === 'yes') form.contactConsent = false
-}, { flush: 'sync' })
-
-function continueToInsurance() {
-  step.value = 2
-}
-
-async function submitRequest() {
-  insuranceSubmitAttempted.value = true
-  if (!form.hasTransportAuthorisation) return
-  await forms.submitRide({
-    first_name: form.firstName,
-    last_name: form.lastName,
-    birth_date: birthDate.value?.toString() || '',
-    email: form.email,
-    phone: form.phone,
-    insurer: form.insurer,
-    has_transport_authorisation: form.hasTransportAuthorisation === 'yes',
-    authorisation_number: form.hasTransportAuthorisation === 'yes' ? form.authorisationNumber : null,
-    contact_consent: form.contactConsent
-  })
-  submitted.value = true
-}
-</script>
-
 <template>
   <main id="inhoud">
     <section class="bg-navy-900 py-16 text-white sm:py-20">
@@ -411,3 +301,113 @@ async function submitRequest() {
     </section>
   </main>
 </template>
+
+<script setup lang="ts">
+import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
+import { z } from 'zod';
+
+const step = ref(1);
+const submitted = ref(false);
+const forms = useForms();
+const insuranceSubmitAttempted = ref(false);
+const birthDate = shallowRef<CalendarDate | null>(null);
+const todayDate = today(getLocalTimeZone());
+const minBirthDate = todayDate.subtract({ years: 120 });
+const maxBirthDate = todayDate;
+const form = reactive({
+  firstName: '',
+  lastName: '',
+  birthDate: null as unknown,
+  email: '',
+  phone: '',
+  insurer: '',
+  hasTransportAuthorisation: '',
+  authorisationNumber: '',
+  contactConsent: false,
+});
+
+const insurers = [
+  'CZ', 'DSW', 'Menzis', 'VGZ', 'Zilveren Kruis', 'a.s.r.', 'Anderzorg', 'Bewuzt',
+  'CZdirect', 'De Friesland', 'FBTO', 'HollandZorg', 'IZA', 'IZZ', 'Just',
+  'Nationale-Nederlanden', 'OHRA', 'ONVZ', 'Salland', 'Univé', 'UnitedConsumers',
+  'VvAA', 'Zorg en Zekerheid', 'Anders',
+];
+
+const transportAuthorisationOptions = [
+  { label: 'Ja, ik heb al toestemming', value: 'yes' },
+  { label: 'Nee, of ik weet het niet', value: 'no' },
+];
+
+const personalSchema = z.object({
+  firstName: z.string().trim().min(1, 'Vul uw voornaam in.'),
+  lastName: z.string().trim().min(1, 'Vul uw achternaam in.'),
+  birthDate: z.unknown()
+    .refine((value) => value instanceof CalendarDate, 'Vul uw geboortedatum in.')
+    .refine((value) => {
+      if (!(value instanceof CalendarDate)) return false;
+      return value.compare(minBirthDate) >= 0 && value.compare(maxBirthDate) <= 0;
+    }, 'Vul een geldige geboortedatum in.'),
+  email: z.string().trim().email('Vul een geldig e-mailadres in.'),
+  phone: z.string().trim().min(1, 'Vul uw telefoonnummer in.'),
+});
+
+const insuranceSchema = z.object({
+  insurer: z.string().min(1, 'Kies uw zorgverzekeraar.'),
+  hasTransportAuthorisation: z.string().optional(),
+  authorisationNumber: z.string().trim(),
+  contactConsent: z.boolean(),
+}).superRefine((value, ctx) => {
+  if (value.hasTransportAuthorisation === 'yes' && !value.contactConsent && !value.authorisationNumber) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['authorisationNumber'],
+      message: 'Vul uw machtigingsnummer in.',
+    });
+  }
+});
+
+usePageSeo({
+  title: 'Zorgvervoer aanvragen',
+  description: 'Vraag zorgvervoer aan bij Huppie Taxi. Uw aanvraag wordt zorgvuldig behandeld.',
+  path: '/rit-aanvragen',
+  noindex: true,
+});
+
+defineOgImage('Huppie', {
+  title: 'Zorgvervoer aanvragen',
+  description: 'Vraag zorgvervoer aan bij Huppie Taxi. Uw aanvraag wordt zorgvuldig behandeld.',
+});
+
+const schema = computed(() => step.value === 1 ? personalSchema : insuranceSchema);
+const isStepOneComplete = computed(() => personalSchema.safeParse(form).success);
+const hasAuthorisationSelectionError = computed(() => insuranceSubmitAttempted.value && !form.hasTransportAuthorisation);
+
+watch(() => form.contactConsent, (wantsHelp) => {
+  if (wantsHelp) form.authorisationNumber = '';
+});
+
+watch(() => form.hasTransportAuthorisation, (hasAuthorisation) => {
+  if (hasAuthorisation === 'yes') form.contactConsent = false;
+}, { flush: 'sync' });
+
+function continueToInsurance() {
+  step.value = 2;
+}
+
+async function submitRequest() {
+  insuranceSubmitAttempted.value = true;
+  if (!form.hasTransportAuthorisation) return;
+  await forms.submitRide({
+    first_name: form.firstName,
+    last_name: form.lastName,
+    birth_date: birthDate.value?.toString() || '',
+    email: form.email,
+    phone: form.phone,
+    insurer: form.insurer,
+    has_transport_authorisation: form.hasTransportAuthorisation === 'yes',
+    authorisation_number: form.hasTransportAuthorisation === 'yes' ? form.authorisationNumber : null,
+    contact_consent: form.contactConsent,
+  });
+  submitted.value = true;
+}
+</script>

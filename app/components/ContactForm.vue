@@ -1,35 +1,3 @@
-<script setup lang="ts">
-import { z } from 'zod'
-
-const props = withDefaults(defineProps<{
-  eyebrow?: string
-  title?: string
-  description?: string
-  successTitle?: string
-}>(), {
-  eyebrow: 'Stuur een bericht',
-  title: 'Waar kunnen we u mee helpen?',
-  description: 'Laat uw gegevens en vraag achter.',
-  successTitle: 'Bedankt voor uw bericht.'
-})
-
-const schema = z.object({
-  name: z.string().trim().min(1, 'Vul uw naam in.'),
-  email: z.string().trim().email('Vul een geldig e-mailadres in.'),
-  phone: z.string(),
-  message: z.string().trim().min(1, 'Vul uw bericht in.')
-})
-
-const submitted = ref(false)
-const form = reactive({ name: '', email: '', phone: '', message: '' })
-const forms = useForms()
-
-async function submit() {
-  await forms.submitContact({ ...form })
-  submitted.value = true
-}
-</script>
-
 <template>
   <div
     v-if="submitted"
@@ -142,3 +110,35 @@ async function submit() {
     </p>
   </UForm>
 </template>
+
+<script setup lang="ts">
+import { z } from 'zod';
+
+const props = withDefaults(defineProps<{
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  successTitle?: string;
+}>(), {
+  eyebrow: 'Stuur een bericht',
+  title: 'Waar kunnen we u mee helpen?',
+  description: 'Laat uw gegevens en vraag achter.',
+  successTitle: 'Bedankt voor uw bericht.',
+});
+
+const schema = z.object({
+  name: z.string().trim().min(1, 'Vul uw naam in.'),
+  email: z.string().trim().email('Vul een geldig e-mailadres in.'),
+  phone: z.string(),
+  message: z.string().trim().min(1, 'Vul uw bericht in.'),
+});
+
+const submitted = ref(false);
+const form = reactive({ name: '', email: '', phone: '', message: '' });
+const forms = useForms();
+
+async function submit() {
+  await forms.submitContact({ ...form });
+  submitted.value = true;
+}
+</script>
