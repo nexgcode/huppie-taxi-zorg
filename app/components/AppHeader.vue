@@ -24,7 +24,9 @@
           :key="item.to"
           :to="item.to"
           class="text-sm font-medium text-navy-700 transition hover:text-teal-700 focus:outline-none focus:underline"
-        >{{ item.label }}</NuxtLink>
+        >
+          {{ item.label }}
+        </NuxtLink>
       </nav>
 
       <UButton
@@ -56,12 +58,16 @@
           :to="item.to"
           class="rounded-lg px-3 py-3 font-medium text-navy-900 hover:bg-navy-50"
           @click="isMenuOpen = false"
-        >{{ item.label }}</NuxtLink>
+        >
+          {{ item.label }}
+        </NuxtLink>
         <NuxtLink
           to="/rit-aanvragen"
           class="mt-2 rounded-lg bg-navy-900 px-3 py-3 text-center font-bold text-white"
           @click="isMenuOpen = false"
-        >Rit aanvragen</NuxtLink>
+        >
+          Rit aanvragen
+        </NuxtLink>
       </div>
     </nav>
   </header>
