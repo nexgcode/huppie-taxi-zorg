@@ -26,14 +26,7 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/': { prerender: true },
-    '/contact': { prerender: true },
-    '/partners': { prerender: true },
-    '/chauffeur-worden': { prerender: true },
-    '/rit-aanvragen': { robots: false },
-    '/admin/**': { robots: false },
-    '/robots.txt': { prerender: true },
-    '/sitemap.xml': { prerender: true }
+    '/admin/**': { robots: false }
   },
 
   compatibilityDate: '2026-06-30',
