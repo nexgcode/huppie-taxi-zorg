@@ -10,7 +10,7 @@ const rideSchema = z.object({ first_name: z.string().trim().min(1), last_name: z
   if (value.has_transport_authorisation && value.contact_consent) ctx.addIssue({ code: 'custom', message: 'Ongeldige toestemming.' })
   if (!value.has_transport_authorisation && value.authorisation_number) ctx.addIssue({ code: 'custom', message: 'Ongeldig machtigingsnummer.' })
 })
-const partnerSchema = z.object({ email: z.string().trim().email(), appointment_date: z.string().date(), appointment_time: z.string().time() })
+const partnerSchema = z.object({ email: z.string().trim().email(), appointment_date: z.string().date(), appointment_time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Ongeldige tijd.') })
 const driverSchema = z.object({ name: z.string().trim().min(1), company: z.string().trim().min(1), phone: z.string().trim().min(1), email: z.string().trim().email(), kvk_number: z.string().trim().min(1), tx_certificate: z.boolean(), license_plate: z.string().trim().min(1), vehicle: z.string().trim().min(1) })
 
 const documentTypes = new Set(['driver_license', 'driver_card'])
